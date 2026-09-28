@@ -1,0 +1,155 @@
+<h1>🎓 دوره جامع Docker — از «داکر اصلاً چیه؟» تا دپلوی واقعی</h1>
+<p><a href="#"><img alt="AI Generated" src="https://img.shields.io/badge/Generated%20by-GLM--5.3--Flash-blue?style=for-the-badge&amp;logo=openai&amp;logoColor=white" /></a>
+<a href="#"><img alt="Language" src="https://img.shields.io/badge/Language-%D9%81%D8%A7%D8%B1%D8%B3%DB%8C-success?style=for-the-badge" /></a>
+<a href="#"><img alt="Format" src="https://img.shields.io/badge/Format-PDF%20%2B%20Markdown-orange?style=for-the-badge" /></a>
+<a href="#"><img alt="License" src="https://img.shields.io/badge/License-MIT-purple?style=for-the-badge" /></a></p>
+<blockquote>
+<p>🤖 <strong>تولید شده توسط هوش مصنوعی:</strong> این دوره به‌طور کامل توسط مدل <strong>GLM-5.3-Flash</strong> تولید و تدوین شده است.
+<strong>نسخه دوره:</strong> سپتامبر ۲۰۲۶ — سازگار با <strong>Docker Desktop 4.9x / Engine 29</strong> و <strong>Compose v2</strong> (<code>docker compose</code>)
+<strong>مخاطب:</strong> توسعه‌دهندگان وب و نرم‌افزار (به‌ویژه کار با Node.js / JavaScript / Next.js) که قصد دارند داکر را از صفر به صورت اصولی و کاربردی یاد بگیرند.</p>
+</blockquote>
+<hr />
+<h2>🎯 چرا داکر و چرا الان؟</h2>
+<p>مشکل کلاسیک در توسعه نرم‌افزار: «<strong>روی سیستم من کار می‌کرد، روی سرور یا سیستم بقیه کار نمی‌کنه!</strong>» — تفاوت نسخه‌های Node.js، سیستم‌عامل‌های مختلف، نسخه‌های متناقض دیتابیس یا تداخل پورت‌ها و پکیج‌ها. داکر دقیقاً برای پایان دادن به این ناهماهنگی‌ها ساخته شده است.</p>
+<p>مزایای کلیدی یادگیری داکر:
+1. <strong>یکپارچه‌سازی محیط توسعه و پروداکشن:</strong> کد در هر محیطی دقیقاً به یک شکل و در یک کانتینر ایزوله اجرا می‌شود.
+2. <strong>کاربرد مستقیم در پروژه‌های واقعی:</strong> راه‌اندازی سریع دیتابیس‌ها و سرویس‌های مختلف بدون نیاز به نصب دستی روی سیستم‌عامل میزبان، و آماده‌سازی آسان پروژه برای کار تیمی یا دپلوی روی سرور.</p>
+<p>پس از پایان این دوره:
+- اجرای استک‌های چندسرویسی با <code>docker compose up</code> به یک کار روتین و ساده تبدیل می‌شود.
+- امکان کانتینرسازی برنامه‌های تحت وب و دپلوی استاندارد آن‌ها روی هر نوع سروری فراهم خواهد شد.
+- توانایی کامل در نوشتن، بهینه‌سازی و دیباگ فایلهای <code>Dockerfile</code> و <code>compose.yaml</code> به دست می‌آید.</p>
+<hr />
+<h2>🗺️ نقشه دوره</h2>
+<table>
+<thead>
+<tr>
+<th>فصل</th>
+<th>موضوع</th>
+<th>چی یاد می‌گیری</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="./01-what-why.md">فصل ۱</a></td>
+<td>داکر چیست؟</td>
+<td>image/container/registry، کانتینر vs ماشین مجازی</td>
+</tr>
+<tr>
+<td><a href="./02-install.md">فصل ۲</a></td>
+<td>نصب</td>
+<td>Docker Desktop روی ویندوز، WSL2، اولین hello-world</td>
+</tr>
+<tr>
+<td><a href="./03-run-containers.md">فصل ۳</a></td>
+<td>اجرای کانتینر</td>
+<td>run، پورت‌ها (-p)، logs، ps، stop/rm</td>
+</tr>
+<tr>
+<td><a href="./04-images.md">فصل ۴</a></td>
+<td>ایمیج‌ها</td>
+<td>pull، تگ‌ها، Docker Hub، لایه‌ها و کش</td>
+</tr>
+<tr>
+<td><a href="./05-inside-containers.md">فصل ۵</a></td>
+<td>داخل کانتینر</td>
+<td>exec و شل، env ها، inspect — دیباگ واقعی</td>
+</tr>
+<tr>
+<td><a href="./06-dockerfile.md">فصل ۶</a></td>
+<td>اولین Dockerfile</td>
+<td>بسته‌بندی یک اپ Node — خط به خط</td>
+</tr>
+<tr>
+<td><a href="./07-optimize.md">فصل ۷</a></td>
+<td>ایمیج تمیز</td>
+<td>multi-stage، alpine، کش لایه‌ها، کاهش حجم</td>
+</tr>
+<tr>
+<td><a href="./08-compose.md">فصل ۸</a></td>
+<td>Docker Compose ⭐</td>
+<td>کل استک با یک فایل YAML و یک دستور</td>
+</tr>
+<tr>
+<td><a href="./09-volumes.md">فصل ۹</a></td>
+<td>داده ماندگار</td>
+<td>volumes، bind mounts، workflow توسعه زنده</td>
+</tr>
+<tr>
+<td><a href="./10-networking.md">فصل ۱۰</a></td>
+<td>شبکه‌ها</td>
+<td>کانتینر به کانتینر؛ اسم سرویس = hostname</td>
+</tr>
+<tr>
+<td><a href="./11-dev-workflow.md">فصل ۱۱</a></td>
+<td>🚀 داکر در کار روزمره</td>
+<td>استک کامل: Next.js + Postgres + Prisma در کانتینر</td>
+</tr>
+<tr>
+<td><a href="./12-push-deploy.md">فصل ۱۲</a></td>
+<td>push و دپلوی</td>
+<td>Docker Hub/GHCR، دپلوی روی VPS، پاکسازی و امنیت</td>
+</tr>
+<tr>
+<td><a href="./13-cheatsheet.md">فصل ۱۳</a></td>
+<td>چیت‌شیت و گلاساری</td>
+<td>مرور سریع + ۱۲ ارور کلاسیک داکر</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>🧪 زمین تمرین</h2>
+<p>همه تمرین‌ها با داکر واقعی انجام می‌شن — کانتینرها کاملاً ایزوله‌اند، بنابراین با خیال راحت آزمایش کنید:</p>
+<div class="codehilite"><pre><span></span><code>mkdir<span class="w"> </span>~/docker-playground<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">cd</span><span class="w"> </span>~/docker-playground
+</code></pre></div>
+
+<p><strong>قانون طلایی داکر:</strong> کانتینر = یک بسته نرم‌افزاری ایزوله و یکبار‌مصرف. در صورت بروز هرگونه مشکل، با <code>docker rm</code> پاک شده و مجدداً از نو راه‌اندازی می‌شود.</p>
+<hr />
+<h2>📋 پیش‌نیازهای فنی</h2>
+<table>
+<thead>
+<tr>
+<th>ابزار / مهارت</th>
+<th>کاربرد</th>
+<th>دستور بررسی</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ویندوز 10/11 ۶۴بیتی (یا لینوکس/مک)</td>
+<td>بستر اجرای Docker Desktop یا Engine</td>
+<td>—</td>
+</tr>
+<tr>
+<td>آشنایی مقدماتی با ترمینال / شل</td>
+<td>اجرای دستورات داکر در خط فرمان</td>
+<td><code>bash --version</code></td>
+</tr>
+<tr>
+<td>نصب بودن Node.js (برای مثال‌های عملی)</td>
+<td>اجرای کدهای نمونه وب</td>
+<td><code>node -v</code></td>
+</tr>
+<tr>
+<td>Git</td>
+<td>کلون و مدیریت مخازن پروژه‌ها</td>
+<td><code>git --version</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>💡 در طول این دوره مفاهیم خط فرمان، متغیرهای محیطی (<code>.env</code>) و دستورات روتین شل به‌طور عملی در خدمت مدیریت کانتینرها به کار گرفته می‌شوند و تمام مراحل گام‌به‌گام توضیح داده شده است.</p>
+</blockquote>
+<hr />
+<h2>📄 تبدیل به PDF</h2>
+<p>نسخه PDF رنگی راست‌به‌چپ (فونت وزیرمتن) در همین پوشه آماده است: <strong>«دوره کامل Docker.pdf»</strong>. برای بازسازی: <code>python build/build_pdf.py</code> + رندر Chrome headless (دستور در پرامپت آماده پوشه والد).</p>
+<hr />
+<h2>🏷️ کلمات کلیدی و برچسب‌های سئو (SEO Keywords &amp; Tags)</h2>
+<blockquote>
+<p><strong>تگ‌های پیشنهادی برای مخزن گیت‌هاب (Topics):</strong>
+<code>docker, docker-compose, containerization, devops, dockerfile, microservices, persian-tutorial, farsi, آموزش-داکر, دوآپس</code></p>
+</blockquote>
+<p><strong>کلمات کلیدی جستجو:</strong><br />
+آموزش جامع داکر Docker به زبان فارسی, کتاب آموزش داکر pdf, داکر کامپوز برای توسعه دهندگان, کانتینرسازی پروژه های وب, آموزش دوآپس از صفر</p>
+<hr />
+<h2>📥 دانلود مستقیم نسخه چاپی و PDF کتاب</h2>
+<p>برای دسترسی و دانلود مستقیم فایل PDF کامل این دوره آموزشی، به بخش <strong><a href="../../releases">Releases</a></strong> همین ریپازیتوری مراجعه کنید یا فایل PDF قرار داده شده در ریشه مخزن را دریافت نمایید.</p>

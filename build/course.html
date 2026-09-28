@@ -1,0 +1,2455 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl"><head><meta charset="utf-8"/>
+<title>دوره Docker</title>
+<style>
+@font-face { font-family:'Vazirmatn'; src:url('fonts/Vazirmatn-Regular.ttf') format('truetype'); font-weight:400; }
+@font-face { font-family:'Vazirmatn'; src:url('fonts/Vazirmatn-Medium.ttf') format('truetype'); font-weight:500; }
+@font-face { font-family:'Vazirmatn'; src:url('fonts/Vazirmatn-Bold.ttf') format('truetype'); font-weight:700; }
+@font-face { font-family:'JetBrains Mono'; src:url('fonts/JetBrainsMono-Regular.ttf') format('truetype'); font-weight:400; }
+@font-face { font-family:'JetBrains Mono'; src:url('fonts/JetBrainsMono-Bold.ttf') format('truetype'); font-weight:700; }
+
+@page { size: A4; margin: 16mm 13mm 18mm 13mm; }
+
+:root {
+  --ink:#0f1f17; --muted:#5f6f66; --line:#dde7e1;
+  --primary:#047857; --primary-soft:#ecfdf5;
+  --accent:#b45309; --accent-soft:#fffbeb;
+  --green:#059669; --green-soft:#ecfdf5;
+  --amber:#b45309; --amber-soft:#fffbeb;
+  --rose:#be123c; --rose-soft:#fff1f2;
+  --code-bg:#0b2920; --code-ink:#e2e8f0;
+}
+* { box-sizing:border-box; }
+html { -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+body {
+  direction:rtl; text-align:right;
+  font-family:'Vazirmatn', Tahoma, sans-serif;
+  color:var(--ink); font-size:11.2pt; line-height:2;
+  margin:0; padding:0;
+}
+
+/* cover */
+.cover {
+  page-break-after:always; height:250mm;
+  display:flex; flex-direction:column; justify-content:center; align-items:center;
+  text-align:center; color:#fff; border-radius:14px; padding:20mm;
+  background:linear-gradient(135deg,#052e22 0%,#047857 50%,#0d9488 100%);
+}
+.cover .badge { background:rgba(255,255,255,.16); border:1px solid rgba(255,255,255,.35);
+  padding:4px 18px; border-radius:999px; font-size:10pt; letter-spacing:.3px; }
+.cover h1 { font-size:30pt; line-height:1.6; margin:14px 0 6px; border:none; color:#fff; background:none; }
+.cover h2 { font-size:14pt; font-weight:500; color:#d1fae5; border:none; margin:0; }
+.cover .stack { display:flex; gap:10px; margin-top:26px; flex-wrap:wrap; justify-content:center; }
+.cover .stack span { background:rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.3);
+  border-radius:10px; padding:6px 16px; font-size:10.5pt; }
+.cover .foot { margin-top:40px; font-size:9.5pt; opacity:.85; }
+
+/* toc */
+.toc { page-break-after:always; }
+.toc h1 { border:none; }
+.toc ol { list-style:none; padding:0; counter-reset:toc; }
+.toc li { counter-increment:toc; border-bottom:1px dashed var(--line);
+  padding:9px 2px; display:flex; justify-content:space-between; align-items:baseline; }
+.toc a { text-decoration:none; color:var(--ink); font-weight:500; }
+.toc li::before { content:counter(toc); background:var(--primary-soft); color:var(--primary);
+  font-weight:700; border-radius:8px; width:30px; height:30px; display:inline-flex;
+  align-items:center; justify-content:center; margin-left:14px; flex:none; }
+.toc li .desc { color:var(--muted); font-size:9.5pt; }
+
+/* chapters / headings */
+.chapter { page-break-before:always; }
+h1 {
+  font-size:19pt; color:#fff; background:linear-gradient(90deg,#065f46,#059669);
+  padding:14px 22px; border-radius:12px; line-height:1.7;
+  margin:0 0 18px; page-break-after:avoid;
+}
+h2 {
+  color:var(--primary); font-size:14.5pt; margin:26px 0 10px;
+  padding-right:12px; border-right:4px solid var(--primary); line-height:1.8;
+  page-break-after:avoid;
+}
+h3 { color:var(--accent); font-size:12.5pt; margin:20px 0 8px; page-break-after:avoid; }
+p { margin:8px 0; }
+strong { color:#064e3b; }
+a { color:var(--primary); text-decoration:none; }
+
+/* lists */
+ul, ol { padding-right:1.6em; padding-left:0; margin:8px 0; }
+li { margin:3px 0; }
+li::marker { color:var(--primary); font-weight:700; }
+input[type="checkbox"] { accent-color:var(--primary); }
+
+/* tables */
+table { border-collapse:collapse; width:100%; margin:12px 0; font-size:10pt;
+  border-radius:10px; overflow:hidden; page-break-inside:avoid; }
+th { background:linear-gradient(90deg,#065f46,#059669); color:#fff; font-weight:700; }
+th, td { border:1px solid #d3e4dc; padding:6px 10px; text-align:right; vertical-align:top; }
+tbody tr:nth-child(even) { background:#f6faf8; }
+
+/* code */
+pre, code, kbd { font-family:'JetBrains Mono','Vazirmatn',Consolas,monospace; direction:ltr; }
+code { background:#ecfdf5; color:#047857; padding:1px 6px; border-radius:5px;
+  font-size:8.8pt; unicode-bidi:embed; }
+pre { background:var(--code-bg); color:var(--code-ink); direction:ltr; text-align:left;
+  padding:13px 16px; border-radius:12px; overflow-x:hidden; font-size:8.6pt;
+  line-height:1.65; margin:10px 0; border:1px solid #134e4a; page-break-inside:avoid; }
+pre code { background:none; color:inherit; padding:0; font-size:inherit; }
+.codehilite { background:var(--code-bg); border-radius:12px; margin:10px 0; page-break-inside:avoid; }
+.codehilite pre { margin:0; border:none; }
+.codehilite .k,.codehilite .kd,.codehilite .kn,.codehilite .ow { color:#6ee7b7; }
+.codehilite .s,.codehilite .s1,.codehilite .s2,.codehilite .sd { color:#fde68a; }
+.codehilite .n,.codehilite .na,.codehilite .nx { color:#e2e8f0; }
+.codehilite .nf { color:#a5f3fc; }
+.codehilite .mi,.codehilite .mf { color:#fda4af; }
+.codehilite .o,.codehilite .p { color:#94a3b8; }
+.codehilite .nb,.codehilite .nv { color:#5eead4; }
+.codehilite .err { color:#e2e8f0; background:none; border:none; }
+.codehilite .c,.codehilite .c1,.codehilite .cm,.codehilite .cp { color:#6ee7b7 !important; font-style:italic; }
+.codehilite .nt { color:#f0abfc; }
+.codehilite .nd { color:#a5f3fc; }
+
+/* blockquotes */
+blockquote {
+  margin:12px 0; padding:10px 16px; border-radius:12px;
+  border-right:5px solid var(--primary); background:var(--primary-soft);
+  page-break-inside:avoid;
+}
+blockquote p { margin:4px 0; }
+blockquote p:first-child { font-weight:500; }
+blockquote:has(> p:first-child strong:contains("⚠")) { background:var(--amber-soft); border-right-color:var(--amber); }
+blockquote:has(> p:first-child strong:contains("🚨")) { background:var(--rose-soft); border-right-color:var(--rose); }
+blockquote:has(> p:first-child strong:contains("💡")) { background:var(--green-soft); border-right-color:var(--green); }
+blockquote:has(> p:first-child strong:contains("🔑")) { background:var(--green-soft); border-right-color:var(--green); }
+blockquote:has(> p:first-child strong:contains("🎯")) { background:var(--primary-soft); border-right-color:var(--primary); }
+blockquote:has(> p:first-child strong:contains("⭐")) { background:var(--accent-soft); border-right-color:var(--accent); }
+
+/* hr, details */
+hr { border:none; border-top:2px dashed var(--line); margin:22px 0; }
+details { background:#f6faf8; border:1px solid var(--line); border-radius:10px;
+  padding:8px 14px; margin:10px 0; page-break-inside:avoid; }
+summary { cursor:pointer; font-weight:700; color:var(--green); }
+
+/* mermaid */
+.mermaid {
+  background:#fff; border:1px solid var(--line); border-radius:12px;
+  padding:10px; margin:12px 0; text-align:center; page-break-inside:avoid;
+  display:flex; justify-content:center;
+}
+.mermaid svg { max-width:100%; height:auto; }
+
+del { color:var(--muted); }
+em { color:#134e4a; }
+
+pre { line-height: 125%; }
+td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+.codehilite .hll { background-color: #ffffcc }
+.codehilite { background: #f8f8f8; }
+.codehilite .c { color: #3D7B7B; font-style: italic } /* Comment */
+.codehilite .err { border: 1px solid #F00 } /* Error */
+.codehilite .k { color: #008000; font-weight: bold } /* Keyword */
+.codehilite .o { color: #666 } /* Operator */
+.codehilite .ch { color: #3D7B7B; font-style: italic } /* Comment.Hashbang */
+.codehilite .cm { color: #3D7B7B; font-style: italic } /* Comment.Multiline */
+.codehilite .cp { color: #9C6500 } /* Comment.Preproc */
+.codehilite .cpf { color: #3D7B7B; font-style: italic } /* Comment.PreprocFile */
+.codehilite .c1 { color: #3D7B7B; font-style: italic } /* Comment.Single */
+.codehilite .cs { color: #3D7B7B; font-style: italic } /* Comment.Special */
+.codehilite .gd { color: #A00000 } /* Generic.Deleted */
+.codehilite .ge { font-style: italic } /* Generic.Emph */
+.codehilite .ges { font-weight: bold; font-style: italic } /* Generic.EmphStrong */
+.codehilite .gr { color: #E40000 } /* Generic.Error */
+.codehilite .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.codehilite .gi { color: #008400 } /* Generic.Inserted */
+.codehilite .go { color: #717171 } /* Generic.Output */
+.codehilite .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
+.codehilite .gs { font-weight: bold } /* Generic.Strong */
+.codehilite .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.codehilite .gt { color: #04D } /* Generic.Traceback */
+.codehilite .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
+.codehilite .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
+.codehilite .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
+.codehilite .kp { color: #008000 } /* Keyword.Pseudo */
+.codehilite .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
+.codehilite .kt { color: #B00040 } /* Keyword.Type */
+.codehilite .m { color: #666 } /* Literal.Number */
+.codehilite .s { color: #BA2121 } /* Literal.String */
+.codehilite .na { color: #687822 } /* Name.Attribute */
+.codehilite .nb { color: #008000 } /* Name.Builtin */
+.codehilite .nc { color: #00F; font-weight: bold } /* Name.Class */
+.codehilite .no { color: #800 } /* Name.Constant */
+.codehilite .nd { color: #A2F } /* Name.Decorator */
+.codehilite .ni { color: #717171; font-weight: bold } /* Name.Entity */
+.codehilite .ne { color: #CB3F38; font-weight: bold } /* Name.Exception */
+.codehilite .nf { color: #00F } /* Name.Function */
+.codehilite .nl { color: #767600 } /* Name.Label */
+.codehilite .nn { color: #00F; font-weight: bold } /* Name.Namespace */
+.codehilite .nt { color: #008000; font-weight: bold } /* Name.Tag */
+.codehilite .nv { color: #19177C } /* Name.Variable */
+.codehilite .ow { color: #A2F; font-weight: bold } /* Operator.Word */
+.codehilite .w { color: #BBB } /* Text.Whitespace */
+.codehilite .mb { color: #666 } /* Literal.Number.Bin */
+.codehilite .mf { color: #666 } /* Literal.Number.Float */
+.codehilite .mh { color: #666 } /* Literal.Number.Hex */
+.codehilite .mi { color: #666 } /* Literal.Number.Integer */
+.codehilite .mo { color: #666 } /* Literal.Number.Oct */
+.codehilite .sa { color: #BA2121 } /* Literal.String.Affix */
+.codehilite .sb { color: #BA2121 } /* Literal.String.Backtick */
+.codehilite .sc { color: #BA2121 } /* Literal.String.Char */
+.codehilite .dl { color: #BA2121 } /* Literal.String.Delimiter */
+.codehilite .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
+.codehilite .s2 { color: #BA2121 } /* Literal.String.Double */
+.codehilite .se { color: #AA5D1F; font-weight: bold } /* Literal.String.Escape */
+.codehilite .sh { color: #BA2121 } /* Literal.String.Heredoc */
+.codehilite .si { color: #A45A77; font-weight: bold } /* Literal.String.Interpol */
+.codehilite .sx { color: #008000 } /* Literal.String.Other */
+.codehilite .sr { color: #A45A77 } /* Literal.String.Regex */
+.codehilite .s1 { color: #BA2121 } /* Literal.String.Single */
+.codehilite .ss { color: #19177C } /* Literal.String.Symbol */
+.codehilite .bp { color: #008000 } /* Name.Builtin.Pseudo */
+.codehilite .fm { color: #00F } /* Name.Function.Magic */
+.codehilite .vc { color: #19177C } /* Name.Variable.Class */
+.codehilite .vg { color: #19177C } /* Name.Variable.Global */
+.codehilite .vi { color: #19177C } /* Name.Variable.Instance */
+.codehilite .vm { color: #19177C } /* Name.Variable.Magic */
+.codehilite .il { color: #666 } /* Literal.Number.Integer.Long */
+</style></head>
+<body>
+<section class="cover">
+  <div class="badge">آموزش صفر تا صد — نسخه سپتامبر ۲۰۲۶</div>
+  <h1>Docker<br/>از صفر مطلق تا دپلوی واقعی</h1>
+  <h2>بسته‌بندی، اجرا و توزیع پروژه‌های Next.js در کانتینر</h2>
+  <div class="stack">
+    <span>Docker Engine 29</span><span>Dockerfile</span><span>Multi-stage</span>
+    <span>Compose v2</span><span>Volumes</span><span>Deploy on VPS</span>
+  </div>
+  <div class="foot">۱۳ فصل · استک کامل Next.js + PostgreSQL + Prisma · تمرین با جواب · ۱۲ ارور کلاسیک</div>
+</section>
+<section class="toc"><h1>فهرست مطالب</h1><ol><li><a href="#ch00">شروع دوره</a><span class="desc">نقشه دوره و زمین تمرین</span></li><li><a href="#ch01">فصل ۱ — داکر چیست و چرا</a><span class="desc">image/container/registry، کانتینر vs VM</span></li><li><a href="#ch02">فصل ۲ — نصب و hello-world</a><span class="desc">Docker Desktop، WSL2، تأیید سلامت</span></li><li><a href="#ch03">فصل ۳ — اجرای کانتینرها</a><span class="desc">run، -p، logs، ps، چرخه عمر</span></li><li><a href="#ch04">فصل ۴ — ایمیج‌ها و Docker Hub</a><span class="desc">pull، تگ‌ها، لایه‌ها، Alpine</span></li><li><a href="#ch05">فصل ۵ — داخل کانتینر و دیباگ</a><span class="desc">exec -it، env، inspect، چرخه دیباگ</span></li><li><a href="#ch06">فصل ۶ — اولین Dockerfile</a><span class="desc">FROM/COPY/RUN/CMD، کش لایه‌ها</span></li><li><a href="#ch07">فصل ۷ — multi-stage و کاهش حجم</a><span class="desc">multi-stage، omit=dev، کاهش حجم</span></li><li><a href="#ch08">فصل ۸ — Docker Compose</a><span class="desc">YAML، up/down، استک api+db</span></li><li><a href="#ch09">فصل ۹ — داده ماندگار</a><span class="desc">named volume، bind mount، بکاپ</span></li><li><a href="#ch10">فصل ۱۰ — شبکه کانتینرها</a><span class="desc">DNS داخلی، hostname سرویس‌ها</span></li><li><a href="#ch11">فصل ۱۱ — استک Next.js + Postgres 🚀</a><span class="desc">Next.js + Postgres + Prisma در عمل</span></li><li><a href="#ch12">فصل ۱۲ — push و دپلوی</a><span class="desc">push، GHCR، VPS، امنیت</span></li><li><a href="#ch13">فصل ۱۳ — چیت‌شیت و گلاساری</a><span class="desc">مرور سریع + ۱۲ ارور کلاسیک</span></li></ol></section><section class="chapter" id="ch00"><h1>🎓 دوره جامع Docker — از «داکر اصلاً چیه؟» تا دپلوی واقعی</h1>
+<p><a href="#"><img alt="AI Generated" src="https://img.shields.io/badge/Generated%20by-GLM--5.3--Flash-blue?style=for-the-badge&amp;logo=openai&amp;logoColor=white" /></a>
+<a href="#"><img alt="Language" src="https://img.shields.io/badge/Language-%D9%81%D8%A7%D8%B1%D8%B3%DB%8C-success?style=for-the-badge" /></a>
+<a href="#"><img alt="Format" src="https://img.shields.io/badge/Format-PDF%20%2B%20Markdown-orange?style=for-the-badge" /></a>
+<a href="#"><img alt="License" src="https://img.shields.io/badge/License-MIT-purple?style=for-the-badge" /></a></p>
+<blockquote>
+<p>🤖 <strong>تولید شده توسط هوش مصنوعی:</strong> این دوره به‌طور کامل توسط مدل <strong>GLM-5.3-Flash</strong> تولید و تدوین شده است.
+<strong>نسخه دوره:</strong> سپتامبر ۲۰۲۶ — سازگار با <strong>Docker Desktop 4.9x / Engine 29</strong> و <strong>Compose v2</strong> (<code>docker compose</code>)
+<strong>مخاطب:</strong> توسعه‌دهندگان وب و نرم‌افزار (به‌ویژه کار با Node.js / JavaScript / Next.js) که قصد دارند داکر را از صفر به صورت اصولی و کاربردی یاد بگیرند.</p>
+</blockquote>
+<hr />
+<h2>🎯 چرا داکر و چرا الان؟</h2>
+<p>مشکل کلاسیک در توسعه نرم‌افزار: «<strong>روی سیستم من کار می‌کرد، روی سرور یا سیستم بقیه کار نمی‌کنه!</strong>» — تفاوت نسخه‌های Node.js، سیستم‌عامل‌های مختلف، نسخه‌های متناقض دیتابیس یا تداخل پورت‌ها و پکیج‌ها. داکر دقیقاً برای پایان دادن به این ناهماهنگی‌ها ساخته شده است.</p>
+<p>مزایای کلیدی یادگیری داکر:
+1. <strong>یکپارچه‌سازی محیط توسعه و پروداکشن:</strong> کد در هر محیطی دقیقاً به یک شکل و در یک کانتینر ایزوله اجرا می‌شود.
+2. <strong>کاربرد مستقیم در پروژه‌های واقعی:</strong> راه‌اندازی سریع دیتابیس‌ها و سرویس‌های مختلف بدون نیاز به نصب دستی روی سیستم‌عامل میزبان، و آماده‌سازی آسان پروژه برای کار تیمی یا دپلوی روی سرور.</p>
+<p>پس از پایان این دوره:
+- اجرای استک‌های چندسرویسی با <code>docker compose up</code> به یک کار روتین و ساده تبدیل می‌شود.
+- امکان کانتینرسازی برنامه‌های تحت وب و دپلوی استاندارد آن‌ها روی هر نوع سروری فراهم خواهد شد.
+- توانایی کامل در نوشتن، بهینه‌سازی و دیباگ فایلهای <code>Dockerfile</code> و <code>compose.yaml</code> به دست می‌آید.</p>
+<hr />
+<h2>🗺️ نقشه دوره</h2>
+<table>
+<thead>
+<tr>
+<th>فصل</th>
+<th>موضوع</th>
+<th>چی یاد می‌گیری</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="#ch01">فصل ۱</a></td>
+<td>داکر چیست؟</td>
+<td>image/container/registry، کانتینر vs ماشین مجازی</td>
+</tr>
+<tr>
+<td><a href="#ch02">فصل ۲</a></td>
+<td>نصب</td>
+<td>Docker Desktop روی ویندوز، WSL2، اولین hello-world</td>
+</tr>
+<tr>
+<td><a href="#ch03">فصل ۳</a></td>
+<td>اجرای کانتینر</td>
+<td>run، پورت‌ها (-p)، logs، ps، stop/rm</td>
+</tr>
+<tr>
+<td><a href="#ch04">فصل ۴</a></td>
+<td>ایمیج‌ها</td>
+<td>pull، تگ‌ها، Docker Hub، لایه‌ها و کش</td>
+</tr>
+<tr>
+<td><a href="#ch05">فصل ۵</a></td>
+<td>داخل کانتینر</td>
+<td>exec و شل، env ها، inspect — دیباگ واقعی</td>
+</tr>
+<tr>
+<td><a href="#ch06">فصل ۶</a></td>
+<td>اولین Dockerfile</td>
+<td>بسته‌بندی یک اپ Node — خط به خط</td>
+</tr>
+<tr>
+<td><a href="#ch07">فصل ۷</a></td>
+<td>ایمیج تمیز</td>
+<td>multi-stage، alpine، کش لایه‌ها، کاهش حجم</td>
+</tr>
+<tr>
+<td><a href="#ch08">فصل ۸</a></td>
+<td>Docker Compose ⭐</td>
+<td>کل استک با یک فایل YAML و یک دستور</td>
+</tr>
+<tr>
+<td><a href="#ch09">فصل ۹</a></td>
+<td>داده ماندگار</td>
+<td>volumes، bind mounts، workflow توسعه زنده</td>
+</tr>
+<tr>
+<td><a href="#ch10">فصل ۱۰</a></td>
+<td>شبکه‌ها</td>
+<td>کانتینر به کانتینر؛ اسم سرویس = hostname</td>
+</tr>
+<tr>
+<td><a href="#ch11">فصل ۱۱</a></td>
+<td>🚀 داکر در کار روزمره</td>
+<td>استک کامل: Next.js + Postgres + Prisma در کانتینر</td>
+</tr>
+<tr>
+<td><a href="#ch12">فصل ۱۲</a></td>
+<td>push و دپلوی</td>
+<td>Docker Hub/GHCR، دپلوی روی VPS، پاکسازی و امنیت</td>
+</tr>
+<tr>
+<td><a href="#ch13">فصل ۱۳</a></td>
+<td>چیت‌شیت و گلاساری</td>
+<td>مرور سریع + ۱۲ ارور کلاسیک داکر</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>🧪 زمین تمرین</h2>
+<p>همه تمرین‌ها با داکر واقعی انجام می‌شن — کانتینرها کاملاً ایزوله‌اند، بنابراین با خیال راحت آزمایش کنید:</p>
+<div class="codehilite"><pre><span></span><code>mkdir<span class="w"> </span>~/docker-playground<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">cd</span><span class="w"> </span>~/docker-playground
+</code></pre></div>
+
+<p><strong>قانون طلایی داکر:</strong> کانتینر = یک بسته نرم‌افزاری ایزوله و یکبار‌مصرف. در صورت بروز هرگونه مشکل، با <code>docker rm</code> پاک شده و مجدداً از نو راه‌اندازی می‌شود.</p>
+<hr />
+<h2>📋 پیش‌نیازهای فنی</h2>
+<table>
+<thead>
+<tr>
+<th>ابزار / مهارت</th>
+<th>کاربرد</th>
+<th>دستور بررسی</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ویندوز 10/11 ۶۴بیتی (یا لینوکس/مک)</td>
+<td>بستر اجرای Docker Desktop یا Engine</td>
+<td>—</td>
+</tr>
+<tr>
+<td>آشنایی مقدماتی با ترمینال / شل</td>
+<td>اجرای دستورات داکر در خط فرمان</td>
+<td><code>bash --version</code></td>
+</tr>
+<tr>
+<td>نصب بودن Node.js (برای مثال‌های عملی)</td>
+<td>اجرای کدهای نمونه وب</td>
+<td><code>node -v</code></td>
+</tr>
+<tr>
+<td>Git</td>
+<td>کلون و مدیریت مخازن پروژه‌ها</td>
+<td><code>git --version</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>💡 در طول این دوره مفاهیم خط فرمان، متغیرهای محیطی (<code>.env</code>) و دستورات روتین شل به‌طور عملی در خدمت مدیریت کانتینرها به کار گرفته می‌شوند و تمام مراحل گام‌به‌گام توضیح داده شده است.</p>
+</blockquote>
+<hr />
+<h2>📄 تبدیل به PDF</h2>
+<p>نسخه PDF رنگی راست‌به‌چپ (فونت وزیرمتن) در همین پوشه آماده است: <strong>«دوره کامل Docker.pdf»</strong>. برای بازسازی: <code>python build/build_pdf.py</code> + رندر Chrome headless (دستور در پرامپت آماده پوشه والد).</p>
+<hr />
+<h2>🏷️ کلمات کلیدی و برچسب‌های سئو (SEO Keywords &amp; Tags)</h2>
+<blockquote>
+<p><strong>تگ‌های پیشنهادی برای مخزن گیت‌هاب (Topics):</strong>
+<code>docker, docker-compose, containerization, devops, dockerfile, microservices, persian-tutorial, farsi, آموزش-داکر, دوآپس</code></p>
+</blockquote>
+<p><strong>کلمات کلیدی جستجو:</strong><br />
+آموزش جامع داکر Docker به زبان فارسی, کتاب آموزش داکر pdf, داکر کامپوز برای توسعه دهندگان, کانتینرسازی پروژه های وب, آموزش دوآپس از صفر</p>
+<hr />
+<h2>📥 دانلود مستقیم نسخه چاپی و PDF کتاب</h2>
+<p>برای دسترسی و دانلود مستقیم فایل PDF کامل این دوره آموزشی، به بخش <strong><a href="../../releases">Releases</a></strong> همین ریپازیتوری مراجعه کنید یا فایل PDF قرار داده شده در ریشه مخزن را دریافت نمایید.</p></section><section class="chapter" id="ch01"><h1>فصل ۱ — داکر چیست و چرا همه دنیا ازش استفاده می‌کنند؟</h1>
+<blockquote>
+<p>🎯 <strong>هدف این فصل:</strong> بدون نصب هیچ‌چیز، مدل ذهنی درست رو بسازیم: کانتینر چیه، فرقش با ماشین مجازی، و سه کلمه‌ی image/container/registry که کل داکر همینه. هنوز هیچ دستوری نمی‌زنیم.</p>
+</blockquote>
+<hr />
+<h2>۱.۱ — مسئله: «روی سیستم من کار می‌کنه!» 😤</h2>
+<p>یک برنامه کاربردی فقط از چند فایل سورس‌کد تشکیل نشده است — بلکه به یک <strong>محیط اجرایی کامل</strong> نیاز دارد:</p>
+<ul>
+<li>نسخه مشخصی از ران‌تایم (مثل Node.js یا پایتون)</li>
+<li>پکیج‌ها و کتابخانه‌ها با نسخه‌های هماهنگ</li>
+<li>سرویس دیتابیس با نسخه و تنظیمات معین</li>
+<li>متغیرهای محیطی صحیح</li>
+</ul>
+<p>به این مجموعه، <strong>محیط و زیرساخت اجرا (Runtime Environment)</strong> می‌گویند. چالش اصلی: محیط هر رایانه متفاوت است — سیستم توسعه‌دهنده، لپ‌تاپ سایر اعضای تیم، سرور Production، سرور تست CI/CD... تفاوت در این محیط‌ها منجر به خطاهای غیرمنتظره می‌شود.</p>
+<p><strong>راهکار داکر:</strong> برنامه را همراه با <em>تمام پیش‌نیازها و محیط اجرایی‌اش</em> بسته‌بندی کنید — همانند قرار دادن یک سرویس کامل به همراه تنظیمات در یک کانتینر ایزوله. این کانتینر در هر بستری که اجرا شود، رفتاری کاملاً یکسان و قابل پیش‌بینی خواهد داشت: یک بار بیلد کنید، در هر محیطی اجرا کنید.</p>
+<h2>۱.۲ — کانتینر در برابر ماشین مجازی (سوال شماره یک مصاحبه‌ها!)</h2>
+<p>هر دو «ایزوله‌سازی» می‌دن ولی از دو مسیر کاملاً متفاوت:</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>ماشین مجازی (VM)</th>
+<th>کانتینر</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>چی رو مجازی می‌کنه؟</td>
+<td>کل سخت‌افزار + <strong>یک سیستم‌عامل کامل</strong></td>
+<td>فقط فضای کاربر</td>
+</tr>
+<tr>
+<td>اندازه</td>
+<td>گیگابایت‌ها</td>
+<td>ده‌ها مگابایت</td>
+</tr>
+<tr>
+<td>زمان راه‌اندازی</td>
+<td>ده‌ها ثانیه تا دقیقه</td>
+<td><strong>کمتر از یک ثانیه</strong> ⚡</td>
+</tr>
+<tr>
+<td>مصرف رم/CPU</td>
+<td>سنگین</td>
+<td>ناچیز</td>
+</tr>
+<tr>
+<td>چندتا روی لپ‌تاپ؟</td>
+<td>شاید ۲-۳ تا</td>
+<td>ده‌ها تا</td>
+</tr>
+</tbody>
+</table>
+<div class="mermaid">
+flowchart TB
+    subgraph VM["ماشین مجازی"]
+        A1["App A"] --- A2["Guest OS کامل (لینوکس چند گیگ)"] --- H["Hypervisor"] --- OS1["سیستم‌عامل میزبان"]
+    end
+    subgraph DK["داکر"]
+        B1["App A"] --- B2["App B"] --- B3["App C"]
+        B2 --- E["Docker Engine"] --- OS2["سیستم‌عامل میزبان"]
+        B1 -.->|"اشتراک هسته میزبان"| E
+    end
+</div>
+
+<p>راز سبکی کانتینر: کانتینرها <strong>هسته‌ی (kernel) سیستم‌عامل میزبان رو به اشتراک می‌ذارن</strong> و فقط فایل‌ها و پروسه‌های خودشون رو ایزوله می‌کنن. VM یک OS کامل میاره بالا؛ کانتینر فقط «یک اتاق» داخل OS فعلی می‌سازه.</p>
+<blockquote>
+<p>💡 نکته مهم درباره ویندوز: کانتینرهای لینوکسی (که بخش اعظم دنیای کانتینرها را تشکیل می‌دهند) روی ویندوز هم اجرا می‌شوند — زیرا Docker Desktop یک لینوکس فوق‌العاده سبک را در پس‌زمینه با WSL2 مدیریت می‌کند (فصل ۲). بنابراین کانتینری که روی سیستم محلی اجرا می‌شود، دقیقاً همان لینوکس واقعی است که روی سرورها اجرا خواهد شد.</p>
+</blockquote>
+<h2>۱.۳ — سه کلمه طلایی: Image، Container، Registry</h2>
+<p>کل داکر در این سه مفهوم خلاصه می‌شود:</p>
+<table>
+<thead>
+<tr>
+<th>مفهوم</th>
+<th>چیه</th>
+<th>شبیه به (دنیای برنامه‌نویسی)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Image (ایمیج)</strong></td>
+<td>بسته‌ی فقط‌خواندنی حاوی اپ + وابستگی‌ها + محیط — قالب آماده</td>
+<td><strong>کلاس (Class)</strong></td>
+</tr>
+<tr>
+<td><strong>Container (کانتینر)</strong></td>
+<td>نمونه‌ی در حال اجرای یک ایمیج</td>
+<td><strong>نمونه ساخته‌شده (Instance / Object)</strong></td>
+</tr>
+<tr>
+<td><strong>Registry (رجیستری)</strong></td>
+<td>پایگاه ذخیره و توزیع ایمیج‌ها (Docker Hub)</td>
+<td><strong>مخازن پکیج مانند npmjs یا PyPI</strong></td>
+</tr>
+</tbody>
+</table>
+<div class="mermaid">
+flowchart LR
+    R["Docker Hub<br/>(registry)"] -->|"docker pull<br/>دانلود"| I["Image<br/>(قالب فقط‌خواندنی)"]
+    I -->|"docker run<br/>نمونه‌سازی"| C1["Container 1<br/>در حال اجرا"]
+    I --> C2["Container 2"]
+    I --> C3["Container 3"]
+</div>
+
+<p>مشابه مفهوم کلاس و شیء در شیءگرایی: از یک ایمیج <code>postgres:18</code> می‌توان ده کانتینر مستقل (ده دیتابیس کاملاً ایزوله) ایجاد کرد. ایمیج اصلی ثابت می‌ماند و کانتینرها چرخه حیات مستقل دارند.</p>
+<p>چرخه‌ی کار نیز بسیار شبیه به پکیج‌منیجرهاست:</p>
+<table>
+<thead>
+<tr>
+<th>مدیریت پکیج (npm/pip)</th>
+<th>داکر (Docker)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>npm install axios</code> (دانلود پکیج)</td>
+<td><code>docker pull postgres:18</code> (دانلود ایمیج)</td>
+</tr>
+<tr>
+<td>اجرای کد پکیج</td>
+<td><code>docker run postgres:18</code> (اجرای کانتینر)</td>
+</tr>
+<tr>
+<td><code>npm publish</code> (انتشار پکیج)</td>
+<td><code>docker push myapp:1.0</code> (انتشار ایمیج)</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>🔑 درک منطق پکیج‌منیجرها به سادگی به درک داکر کمک می‌کند — تنها تفاوت این است که به جای یک کتابخانه کد، کل محیط اجرایی جابه‌جا می‌شود.</p>
+</blockquote>
+<h2>۱.۴ — داکر چیه دقیقاً؟</h2>
+<p><strong>Docker = مجموعه ابزاری استاندارد برای ساختن، اجرا و توزیع کانتینرها.</strong> شامل:</p>
+<table>
+<thead>
+<tr>
+<th>جزء</th>
+<th>نقش</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Docker Engine</strong></td>
+<td>موتور اجرای کانتینرها (daemon پشت صحنه + هسته داکر)</td>
+</tr>
+<tr>
+<td><strong>Docker CLI</strong></td>
+<td>ابزار خط فرمان <code>docker</code> جهت ارسال دستورات به Engine</td>
+</tr>
+<tr>
+<td><strong>Docker Desktop</strong></td>
+<td>اپ ویندوزی/مکی که Engine + GUI + WSL2 رو یک‌جا نصب می‌کنه</td>
+</tr>
+<tr>
+<td><strong>Docker Compose</strong></td>
+<td>مدیریت چند کانتینر با یک فایل YAML (فصل ۸)</td>
+</tr>
+<tr>
+<td><strong>Docker Hub</strong></td>
+<td>بزرگ‌ترین رجیستری عمومی</td>
+</tr>
+</tbody>
+</table>
+<p>مهم‌ترین نکته: <strong>داکر اساساً مبتنی بر رابط خط فرمان (CLI) است</strong> — <code>docker pull</code>، <code>docker run</code>، <code>docker ps</code>. تمام این دستورات از یک الگوی مشخص و منطقی پیروی می‌کنند: <code>docker &lt;فعل&gt; &lt;موضوع&gt; [فلگ‌ها]</code> — مثل <code>docker image pull</code>، <code>docker container ls</code> و غیره.</p>
+<h2>۱.۵ — چرا شرکت‌ها عاشقش‌ان</h2>
+<ul>
+<li><strong>یکنواختی محیط:</strong> dev = staging = production — همون ایمیج!</li>
+<li><strong>مستقل‌سازی تیم‌ها:</strong> بدون نیاز به نصب دستی Postgres و Redis و Kafka روی سیستم میزبان، فقط با یک دستور اجرا می‌شوند (فصل ۸)</li>
+<li><strong>CI/CD:</strong> پایپ‌لاین‌های گیت‌هاب اکشنز یا GitLab برنامه را داخل کانتینر تست و بیلد می‌کنند — محیطی کاملاً پاک و ایزوله در هر بار اجرا</li>
+<li><strong>دپلوی ساده:</strong> یک ایمیج یکسان روی هر نوع سرور و ابری (فصل ۱۲)</li>
+<li><strong>مقیاس‌پذیری:</strong> افزایش ترافیک؟ از همان ایمیج چندین کانتینر به صورت موازی بالا می‌آید</li>
+</ul>
+<hr />
+<h2>✅ جمع‌بندی فصل</h2>
+<ul>
+<li>مشکل: تفاوت محیط‌ها. جواب: بسته‌بندی اپ <em>با محیطش</em> = کانتینر</li>
+<li>کانتینر ≠ VM: بدون OS کامل، سبک، ثانیه‌ای بالا</li>
+<li><strong>Image = کلاس، Container = آبجکت، Registry = npm برای ایمیج</strong></li>
+<li>داکر = Engine + CLI + Desktop + Compose + Hub؛ و یک ابزار استاندارد خط فرمان است</li>
+<li>چرا شرکت‌ها: یکنواختی، ایزوله‌سازی، دپلوی، مقیاس</li>
+</ul>
+<h2>📝 تمرین فصل ۱</h2>
+<ol>
+<li>فرق image و container رو با analogi کلاس/آبجکت تو یک جمله بگو.</li>
+<li>چرا کانتینر سبک‌تر از VM است؟ (در یک جمله: کی kernel رو شریک می‌شه؟)</li>
+<li>جدول معادل‌ها رو کامل کن: <code>docker pull</code> ↔ <code>npm ?</code>، <code>docker run</code> ↔ <code>?</code>، <code>docker push</code> ↔ <code>?</code></li>
+<li>یک موقعیت واقعی از توسعه نرم‌افزار بنویسید که داکر می‌تواند از بروز ناهماهنگی نسخه‌ها جلوگیری کند (مثل تداخل نسخه‌های مختلف پایگاه داده یا پکیج‌های ناسازگار).</li>
+</ol>
+<details open="open">
+<summary>جواب‌ها</summary>
+<ol start="3">
+<li><code>docker pull</code> ↔ <code>npm install</code>؛ <code>docker run</code> ↔ اجرای برنامه‌ی نصب‌شده (مثل <code>npx</code>)؛ <code>docker push</code> ↔ <code>npm publish</code>.</li>
+</ol>
+</details>
+<p>➡️ <strong>فصل بعد:</strong> نصب Docker Desktop روی ویندوز و اولین hello-world دنیای کانتینرها!</p></section><section class="chapter" id="ch02"><h1>فصل ۲ — نصب داکر روی ویندوز و اولین hello-world</h1>
+<blockquote>
+<p>🎯 <strong>هدف:</strong> Docker Desktop رو درست نصب کنی (با WSL2)، مطمئن شی همه‌چیز وصل است، و اولین کانتینرت رو اجرا کنی. آخر فصل <code>docker run hello-world</code> برای تو یک دستور جادویی نیست.</p>
+</blockquote>
+<hr />
+<h2>۲.۱ — پیش‌نیاز ویندوز: WSL2 چیست و چرا لازمه؟</h2>
+<p>کانتینرهای دنیا <strong>لینوکسی‌ان</strong> و به هسته‌ی لینوکس نیاز دارن. ویندوز هسته لینوکس نداره — پس Docker Desktop یک لینوکس سبک با <strong>WSL2</strong> (Windows Subsystem for Linux 2) پشت صحنه بالا میاره و Engine اونجا اجرا می‌شه. تو احساسش نمی‌کنی؛ فقط بدون که داری کانتینر لینوکس واقعی اجرا می‌کنی.</p>
+<p>چک/فعال‌سازی WSL2 (یک بار، در PowerShell با دسترسی ادمین):</p>
+<div class="codehilite"><pre><span></span><code><span class="n">wsl</span> <span class="p">-</span><span class="n">-status</span>          <span class="c"># اگر نصب است: نسخه پیش‌فرض باید 2 باشد</span>
+<span class="n">wsl</span> <span class="p">-</span><span class="n">-install</span>         <span class="c"># اگر نیست: نصب (ویندوز ری‌استارت می‌خواهد)</span>
+</code></pre></div>
+
+<blockquote>
+<p>💡 گاهی پیام «Virtualization not enabled» می‌بینی — یعنی باید در BIOS سیستم، Virtualization (VT-x / AMD-V) فعال شه. اکثر سیستم‌های جدید روشنه.</p>
+</blockquote>
+<h2>۲.۲ — نصب Docker Desktop</h2>
+<ol>
+<li>برو به <strong>https://www.docker.com/products/docker-desktop/</strong> → نسخه ویندوز (AMD64) رو بگیر (4.9x فعلی)</li>
+<li>نصب‌کننده رو اجرا کن — گزینه <strong>Use WSL 2 instead of Hyper-V</strong> تیک‌خورده بمونه</li>
+<li>بعد از نصب و ری‌استارت، Docker Desktop رو باز کن — آیکون نهنگ 🐳 در tray باید ثابت (بدون انیمیشن) بمونه یعنی Engine بالاست</li>
+<li>قرارداد لایسنس رو قبول کن (برای استفاده شخصی و تیم‌های کوچک رایگانه)</li>
+</ol>
+<h2>۲.۳ — تأیید سلامت: چهار دستور</h2>
+<p>در Git Bash (یا ترمینال VS Code):</p>
+<div class="codehilite"><pre><span></span><code>$<span class="w"> </span>docker<span class="w"> </span>version
+Client:<span class="w"> </span>Docker<span class="w"> </span>Engine<span class="w"> </span>-<span class="w"> </span>Community
+<span class="w"> </span>Version:<span class="w">           </span><span class="m">29</span>.x.x
+Server:<span class="w"> </span>Docker<span class="w"> </span>Engine<span class="w"> </span>-<span class="w"> </span>Community
+<span class="w"> </span>Engine<span class="w"> </span>Version:<span class="w">    </span><span class="m">29</span>.x.x
+<span class="w"> </span>✓<span class="w"> </span><span class="o">(</span>مهم:<span class="w"> </span>بخش<span class="w"> </span>Server<span class="w"> </span>هم<span class="w"> </span>باید<span class="w"> </span>باشد<span class="w"> </span>—<span class="w"> </span>یعنی<span class="w"> </span>CLI<span class="w"> </span>به<span class="w"> </span>Engine<span class="w"> </span>وصل<span class="w"> </span>است<span class="o">)</span>
+
+$<span class="w"> </span>docker<span class="w"> </span>info<span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-20<span class="w">      </span><span class="c1"># اطلاعات کامل محیط</span>
+
+$<span class="w"> </span>docker<span class="w"> </span>run<span class="w"> </span>hello-world
+Hello<span class="w"> </span>from<span class="w"> </span>Docker!<span class="w">            </span><span class="c1"># 🎉 اولین کانتینر!</span>
+...
+
+$<span class="w"> </span>docker<span class="w"> </span>compose<span class="w"> </span>version
+Docker<span class="w"> </span>Compose<span class="w"> </span>version<span class="w"> </span>v2.x.x
+</code></pre></div>
+
+<blockquote>
+<p>🔍 چیزی که تازه اتفاق افتاد، قدم‌به‌قدم:
+1. <code>docker run hello-world</code> → داکر دید ایمیج <code>hello-world</code> لوکال نیست
+2. از Docker Hub <code>pull</code> کرد (دانلود چند کیلوبایت)
+3. ازش یک کانتینر ساخت و اجرا کرد
+4. کانتینر کارش رو کرد (پیام چاپ کرد) و تموم شد</p>
+<p>این چرخه «نگردم بگیر → اجرا کن» همون npm-like رفتاریه که فصل ۱ گفتم.</p>
+</blockquote>
+<h2>۲.۴ — آشنایی با Docker Desktop (GUI)</h2>
+<p>ترمینال ابزار اصلی ماست ولی GUI هم برای «دیدن» خوبه — تب‌های مهمش:</p>
+<ul>
+<li><strong>Containers:</strong> لیست کانتینرهای در حال اجرا/خاموش + دکمه start/stop/delete + <strong>Logs</strong> گرافیکی</li>
+<li><strong>Images:</strong> ایمیج‌های دانلودشده روی سیستم</li>
+<li><strong>Volumes:</strong> داده‌های ماندگار (فصل ۹)</li>
+</ul>
+<blockquote>
+<p>💡 قانون دوره: هر کاری رو <em>اول</em> با CLI یاد بگیر (چون در شرکت/سرور فقط CLI داری)، بعد GUI رو به چشم «داشبورد نگاه سریع» استفاده کن.</p>
+</blockquote>
+<h2>۲.۵ — تنظیمات پیشنهادی اولیه</h2>
+<p>Docker Desktop → Settings (چرخ‌دنده):</p>
+<table>
+<thead>
+<tr>
+<th>تنظیم</th>
+<th>پیشنهاد</th>
+<th>چرا</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>General → Start Docker Desktop when you sign in</td>
+<td>به سلیقه</td>
+<td>اگه هر روز کار می‌کنی، روشن بذار</td>
+</tr>
+<tr>
+<td>Resources → Advanced (در WSL2 محدود است)</td>
+<td>پیش‌فرض WSL2</td>
+<td>WSL2 خودش مدیریت می‌کنه</td>
+</tr>
+<tr>
+<td>Choose how to configure installs...</td>
+<td>پیش‌فرض</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<p>و یک نکته ترمینالی: مطمئن شو <code>docker</code> در ترمینال (مثل Git Bash، PowerShell یا CMD) کار می‌کنه — Docker Desktop در زمان نصب مسیر اجرایی خود را به متغیر محیطی PATH سیستم اضافه می‌کند تا در هر مسیری قابل فراخوانی باشد. اگر ابتدا کار نکرد، کافیست پنجره ترمینال را ببندید و مجدداً باز کنید تا PATH بازخوانی شود.</p>
+<h2>۲.۶ — عیب‌یابی‌های نصب رایج</h2>
+<table>
+<thead>
+<tr>
+<th>مشکل</th>
+<th>علاج</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>docker: command not found</code></td>
+<td>Docker Desktop روشن نیست یا PATH تازه نشده — ترمینال جدید باز کن</td>
+</tr>
+<tr>
+<td>Docker Desktop منتظر Engine می‌مونه</td>
+<td>WSL2 را به‌روز کن: <code>wsl --update</code> (PowerShell ادمین) و ری‌استارت</td>
+</tr>
+<tr>
+<td>«WSL 2 installation is incomplete»</td>
+<td>همون <code>wsl --update</code> + ری‌استارت ویندوز</td>
+</tr>
+<tr>
+<td>کندی عجیب</td>
+<td>آیکون نهنگ را چک کن — Engine خاموشه؛ Desktop را باز کن</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>✅ جمع‌بندی فصل</h2>
+<ul>
+<li>WSL2 = لینوکس زیر داکر روی ویندوز؛ <code>wsl --install</code> و <code>wsl --update</code></li>
+<li>Docker Desktop نصب شد؛ <code>docker version</code> باید Client <strong>و</strong> Server را نشان دهد</li>
+<li><code>docker run hello-world</code> = چرخه کامل: pull از Hub → ساخت کانتینر → اجرا → پایان</li>
+<li>GUI فقط داشبورد؛ CLI ابزار اصلی تو است</li>
+<li><code>command not found</code> = دسکتاپ خاموش یا ترمینال قدیمی</li>
+</ul>
+<h2>📝 تمرین فصل ۲</h2>
+<ol>
+<li>نصب را کامل کن و هر چهار دستور بخش ۲.۳ را بزن — خروجی <code>docker version</code> را باز کن و نسخه Engine را بنویس.</li>
+<li><code>docker run hello-world</code> را <strong>دوبار</strong> بزن. بار دوم چقدر سریع‌تر بود؟ چرا؟ (راهنمایی: ایمیج لوکال شده — مثل npm cache!)</li>
+<li>Docker Desktop را باز کن: در تب Images، ایمیج <code>hello-world</code> را ببین. در تب Containers، کانتینر تمام‌شده را پیدا کن (وضعیتش چیه؟).</li>
+<li>(کشف آزاد) <code>docker --help</code> را بزن و فقط <em>اسم</em> زیرفرمان‌های اصلی را نگاه کن — لیست طولانیه ولی از فصل بعد، این‌ها را همه می‌شناسی.</li>
+</ol>
+<details open="open">
+<summary>جواب تمرین ۲</summary>
+<p>بار دوم فوری است چون ایمیج hello-world از قبل روی دیسک است و داکر فقط کانتینر از رویش می‌سازد — دانلودی در کار نیست. با <code>docker images</code> می‌توانی ایمیج لوکال را ببینی.</p>
+</details>
+<p>➡️ <strong>فصل بعد:</strong> کانتینرهای واقعی — وب‌سرور اجرا کن، پورت‌ها را وصل کن و لاگ‌ها را بخوان.</p></section><section class="chapter" id="ch03"><h1>فصل ۳ — اجرای کانتینرهای واقعی: run، پورت‌ها، لاگ‌ها</h1>
+<blockquote>
+<p>🎯 <strong>هدف:</strong> کار با nginx (وب‌سرور معروف) — چون رفتارش مثل هر سرویسیه که تو اجرا می‌کنی: یک پروسه، یک پورت، لاگ. آخر فصل <code>docker run</code> رو با فلگ‌های پرکاربردش مسلطی.</p>
+</blockquote>
+<hr />
+<h2>۳.۱ — اولین سرویس واقعی: nginx</h2>
+<p>nginx یک وب‌سروره (مثل Apache) که میلیون‌ها سایت باهاش کار می‌کنن — و ایمیج رسمی‌اش ۴۰ مگابایته. اجراش کن:</p>
+<div class="codehilite"><pre><span></span><code>$<span class="w"> </span>docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>-p<span class="w"> </span><span class="m">8080</span>:80<span class="w"> </span>--name<span class="w"> </span>my-web<span class="w"> </span>nginx
+Unable<span class="w"> </span>to<span class="w"> </span>find<span class="w"> </span>image<span class="w"> </span><span class="s1">'nginx:latest'</span><span class="w"> </span>locally
+latest:<span class="w"> </span>Pulling<span class="w"> </span>from<span class="w"> </span>library/nginx
+...<span class="w"> </span><span class="o">(</span>لایه‌ها<span class="w"> </span>دانلود<span class="w"> </span>می‌شوند<span class="o">)</span>
+a1b2c3d4e5f6...
+</code></pre></div>
+
+<p>مرورگر رو باز کن: <strong>http://localhost:8080</strong> — «Welcome to nginx!» رو می‌بینی. 🎉</p>
+<p>فلگ‌ها رو باز کنیم (الگوی استاندارد دستور و گزینه‌ها در خط فرمان):</p>
+<table>
+<thead>
+<tr>
+<th>بخش</th>
+<th>معنی</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>run</code></td>
+<td>از روی ایمیج، کانتینر بساز و اجرا کن</td>
+</tr>
+<tr>
+<td><code>-d</code></td>
+<td><strong>detached</strong> — اجرای کانتینر در پس‌زمینه (آزاد ماندن ترمینال)</td>
+</tr>
+<tr>
+<td><code>-p 8080:80</code></td>
+<td><strong>port mapping</strong> — نگاشت پورت میزبان به کانتینر</td>
+</tr>
+<tr>
+<td><code>--name my-web</code></td>
+<td>اسم دلخواه برای کانتینر (در غیر این صورت یک نام تصادفی می‌گیرد)</td>
+</tr>
+<tr>
+<td><code>nginx</code></td>
+<td>اسم ایمیج مبنا (در صورت نبودن به صورت خودکار دانلود می‌شود)</td>
+</tr>
+</tbody>
+</table>
+<h2>۳.۲ — <code>-p 8080:80</code>: مپینگ پورت (مهم‌ترین فلگ!)</h2>
+<p>کانتینر یک <strong>دنیای ایزوله</strong> است — وب‌سرور داخلش روی پورت ۸۰ گوش می‌ده، ولی از مرورگر تو اصلاً دیده نمی‌شه، چون کانتینر شبکه خودش رو داره.</p>
+<p><code>-p 8080:80</code> یعنی: <strong>«پورت 8080 سیستم من (میزبان) → پورت 80 کانتینر»</strong></p>
+<div class="mermaid">
+flowchart LR
+    B["مرورگر تو<br/>localhost:8080"] -->|"پورت میزبان"| H["پورت مپینگ<br/>8080 → 80"] -->|"پورت کانتینر"| N["nginx داخل کانتینر<br/>گوش می‌دهد روی 80"]
+</div>
+
+<p>چرا این جداسازی نعمته؟ چون می‌تونی ۵ تا nginx داری — هر کدوم پورت ۸۰ خودش رو دارن — و روی میزبان به 8080 و 8081 و 8082 وصل‌شون کنی. بدون تداخل! (دقیقاً همون دردی که با «پورت ۳۰۰۰ اشغاله» می‌کشیدی — داکر اینا رو مدیریت می‌کنه.)</p>
+<div class="codehilite"><pre><span></span><code>$<span class="w"> </span>docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>-p<span class="w"> </span><span class="m">8081</span>:80<span class="w"> </span>--name<span class="w"> </span>web-two<span class="w"> </span>nginx<span class="w">     </span><span class="c1"># دومی روی 8081</span>
+$<span class="w"> </span>docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>-p<span class="w"> </span><span class="m">3000</span>:3000<span class="w"> </span>--name<span class="w"> </span>my-app<span class="w"> </span>node:22<span class="w">  </span><span class="c1"># الگوی همه dev-server ها</span>
+</code></pre></div>
+
+<blockquote>
+<p>⚠️ سمت چپ (پورت میزبان) رو <em>تو</em> انتخاب می‌کنی و باید آزاد باشه؛ سمت راست (پورت کانتینر) رو خود برنامه تعیین می‌کنه — nginx همیشه ۸۰ است، Node app تو همون که کدت نوشته (مثلاً 3000).</p>
+</blockquote>
+<h2>۳.۳ — دیدن وضعیت: <code>docker ps</code></h2>
+<div class="codehilite"><pre><span></span><code>$<span class="w"> </span>docker<span class="w"> </span>ps<span class="w">              </span><span class="c1"># کانتینرهای «در حال اجرا»</span>
+CONTAINER<span class="w"> </span>ID<span class="w">   </span>IMAGE<span class="w">   </span>COMMAND<span class="w">                  </span>...<span class="w">   </span>PORTS<span class="w">                    </span>NAMES
+a1b2c3d4e5f6<span class="w">   </span>nginx<span class="w">   </span><span class="s2">"/docker-entrypoint.…"</span><span class="w">   </span>...<span class="w">   </span><span class="m">0</span>.0.0.0:8080-&gt;80/tcp<span class="w">     </span>my-web
+
+$<span class="w"> </span>docker<span class="w"> </span>ps<span class="w"> </span>-a<span class="w">           </span><span class="c1"># -a = همه، حتی متوقف‌شده‌ها ⭐</span>
+</code></pre></div>
+
+<p>دستور <code>ps</code> (مخفف process status) وضعیت پروسه‌ها و کانتینرهای در حال اجرا را نمایش می‌دهد. با سوییچ <code>-a</code> می‌توانید لیست تمام کانتینرها حتی کانتینرهای متوقف‌شده را مشاهده کنید تا زمانی که با <code>docker rm</code> حذف شوند.</p>
+<h2>۳.۴ — لاگ‌ها: <code>docker logs</code></h2>
+<p>سرور داخلی چی می‌گه؟</p>
+<div class="codehilite"><pre><span></span><code>$<span class="w"> </span>docker<span class="w"> </span>logs<span class="w"> </span>my-web<span class="w">           </span><span class="c1"># همه لاگ‌ها تا الان</span>
+$<span class="w"> </span>docker<span class="w"> </span>logs<span class="w"> </span>-f<span class="w"> </span>my-web<span class="w">        </span><span class="c1"># ⭐ follow — دنبال کردن زنده خروجی (مشابه دستور tail -f در لینوکس)</span>
+$<span class="w"> </span>docker<span class="w"> </span>logs<span class="w"> </span>--tail<span class="w"> </span><span class="m">20</span><span class="w"> </span>my-web<span class="w"> </span><span class="c1"># فقط ۲۰ خط آخر</span>
+$<span class="w"> </span>docker<span class="w"> </span>logs<span class="w"> </span>-f<span class="w"> </span>--tail<span class="w"> </span><span class="m">50</span><span class="w"> </span>my-app<span class="w">    </span><span class="c1"># ترکیب رایج: ۵۰ خط آخر + ادامه زنده</span>
+</code></pre></div>
+
+<p>این «لاگ‌خوانی» مهم‌ترین مهارت دیباگ داکر است: هر خروجی استانداردی که برنامه داخل کانتینر به stdout یا stderr ارسال می‌کند مستقیماً توسط داکر ذخیره شده و اینجا قابل مشاهده است. همچنین می‌توانید با دستوراتی مانند <code>grep</code> لاگ‌ها را فیلتر کنید:</p>
+<div class="codehilite"><pre><span></span><code>$<span class="w"> </span>docker<span class="w"> </span>logs<span class="w"> </span>my-app<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span>error
+</code></pre></div>
+
+<h2>۳.۵ — چرخه عمر: stop، start، restart، rm</h2>
+<div class="codehilite"><pre><span></span><code>$<span class="w"> </span>docker<span class="w"> </span>stop<span class="w"> </span>my-web<span class="w">          </span><span class="c1"># خاموش (کانتینر می‌ماند، فقط متوقف است)</span>
+$<span class="w"> </span>docker<span class="w"> </span>start<span class="w"> </span>my-web<span class="w">         </span><span class="c1"># دوباره روشن — داده‌هایش سرجایش است</span>
+$<span class="w"> </span>docker<span class="w"> </span>restart<span class="w"> </span>my-web<span class="w">       </span><span class="c1"># ری‌استارت</span>
+$<span class="w"> </span>docker<span class="w"> </span>rm<span class="w"> </span>my-web<span class="w">            </span><span class="c1"># ⚠️ حذف کامل — با stop نشده، اول -f: rm -f</span>
+$<span class="w"> </span>docker<span class="w"> </span>rm<span class="w"> </span><span class="k">$(</span>docker<span class="w"> </span>ps<span class="w"> </span>-aq<span class="k">)</span><span class="w">  </span><span class="c1"># حذف همه کانتینرها (اول با docker ps -a نگاه کن!)</span>
+</code></pre></div>
+
+<blockquote>
+<p>🔑 mental model: کانتینر مثل یک object موقتیه — بساز، استفاده کن، دور بنداز. ایده‌ی «سرور مقدسی که می‌ترسم خرابش کنم» مال دنیای قدیمه. داده مهم رو نه توی کانتینر نگه می‌داریم، نه باهاش کار می‌کنیم بلکه توی <strong>volume</strong> نگه می‌داریم (فصل ۹).</p>
+</blockquote>
+<p>میان‌بر مفید: <code>docker container prune</code> = حذف همه کانتینرهای متوقف‌شده (جاروی هفتگی).</p>
+<h2>۳.۶ — چند فلگ run دیگه که همین امروز لازم می‌شن</h2>
+<div class="codehilite"><pre><span></span><code>$<span class="w"> </span>docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>--name<span class="w"> </span>db<span class="w"> </span>-e<span class="w"> </span><span class="nv">POSTGRES_PASSWORD</span><span class="o">=</span><span class="m">1234</span><span class="w"> </span>postgres:18
+<span class="c1">#        -e = ارسال متغیر محیطی (Environment Variable) به کانتینر برای تنظیمات اولیه</span>
+
+$<span class="w"> </span>docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>--restart<span class="w"> </span>unless-stopped<span class="w"> </span>--name<span class="w"> </span>my-web<span class="w"> </span>nginx
+<span class="c1">#        ری‌استارت خودکار — اگه کرش کرد یا سیستم ری‌استارت شد، داکر خودش بالا می‌آوردش</span>
+
+$<span class="w"> </span>docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>hello-world
+<span class="c1">#        --rm = بعد از تمام شدن، خودش را حذف کن (برای ابزارهای یک‌بارمصرف عالی)</span>
+</code></pre></div>
+
+<p>الگوی <code>-e</code> رو حفظ کن — ایمیج‌های رسمی (postgres، mysql، redis...) تنظیماتشون رو با env می‌گیرن؛ همون <code>.env</code> دنیای داکر.</p>
+<hr />
+<h2>✅ جمع‌بندی فصل</h2>
+<ul>
+<li>الگوی طلایی: <code>docker run -d -p میزبان:کانتینر --name اسم ایمیج</code></li>
+<li><code>-p</code> پورت میزبان را به پورت کانتینر وصل می‌کند — چند نسخه بدون تداخل</li>
+<li><code>docker ps</code> (در حال اجرا) / <code>ps -a</code> (همه) / <code>logs -f</code> (دنبال زنده)</li>
+<li>چرخه عمر: stop/start/restart/rm — کانتینر یکبارمصرف است؛ <code>prune</code> جارو</li>
+<li><code>-e</code> = کانفیگ با متغیر محیطی؛ <code>--restart unless-stopped</code> = ماندگاری سرویس</li>
+</ul>
+<h2>📝 تمرین فصل ۳</h2>
+<ol>
+<li>nginx را با نام <code>web-one</code> روی پورت 8080 اجرا کن و در مرورگر ببینش.</li>
+<li>یک nginx دوم با نام <code>web-two</code> روی 8081 اجرا کن — <code>docker ps</code> بزن و دو خط را با هم مقایسه کن.</li>
+<li>لاگ <code>web-one</code> را بزن: اول معمولی، بعد با <code>-f</code> — و در مرورگر یک‌بار صفحه را refresh کن (خط access جدید در لاگ زنده می‌آید!).</li>
+<li><code>web-two</code> را stop کن؛ <code>docker ps -a</code> بزن و وضعیتش را ببین؛ start کن؛ بعد هر دو را کامل حذف کن.</li>
+<li>چالش: <code>docker run -d -p 5432:5432 --name pg -e POSTGRES_PASSWORD=1234 postgres:18</code> را اجرا کن — دیتابیس دوره‌ات در کانتینر بالا آمد! با psql وصل شو و بعدش خداحافظی کن. (فصل ۱۱ کاملش می‌کنیم.)</li>
+</ol>
+<details open="open">
+<summary>راهنمای تمرین ۵</summary>
+<div class="codehilite"><pre><span></span><code>docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>-p<span class="w"> </span><span class="m">5432</span>:5432<span class="w"> </span>--name<span class="w"> </span>pg<span class="w"> </span>-e<span class="w"> </span><span class="nv">POSTGRES_PASSWORD</span><span class="o">=</span><span class="m">1234</span><span class="w"> </span>postgres:18
+docker<span class="w"> </span>logs<span class="w"> </span>-f<span class="w"> </span>pg<span class="w">          </span><span class="c1"># تا "database system is ready" ببینی (چند ثانیه صبر)</span>
+psql<span class="w"> </span><span class="s2">"postgresql://postgres:1234@localhost:5432/postgres"</span><span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT version();"</span>
+docker<span class="w"> </span>rm<span class="w"> </span>-f<span class="w"> </span>pg
+</code></pre></div>
+
+</details>
+<p>➡️ <strong>فصل بعد:</strong> دنیای ایمیج‌ها — لایه‌ها، تگ‌ها و Docker Hub.</p></section><section class="chapter" id="ch04"><h1>فصل ۴ — ایمیج‌ها: تگ‌ها، لایه‌ها و Docker Hub</h1>
+<blockquote>
+<p>🎯 <strong>هدف:</strong> ایمیج رو نه «یک فایل دانلودی»، بلکه یک <strong>پشته‌ی لایه‌ای</strong> بفهمی — چون همه‌ی جادوی داکر (سرعت build، کش، اشتراک فضا) از همین لایه‌ها میاد. Plus: کار با Docker Hub مثل npm.</p>
+</blockquote>
+<hr />
+<h2>۴.۱ — ایمیج از کجا میاد؟ Docker Hub</h2>
+<p><strong>Docker Hub</strong> (hub.docker.com) = npmjs دنیای داکر. میلیون‌ها ایمیج آماده: <code>node</code>، <code>postgres</code>، <code>nginx</code>، <code>redis</code>، <code>python</code>...</p>
+<div class="codehilite"><pre><span></span><code>$<span class="w"> </span>docker<span class="w"> </span>search<span class="w"> </span>postgres<span class="w">        </span><span class="c1"># جستجو (مثل npm search)</span>
+$<span class="w"> </span>docker<span class="w"> </span>pull<span class="w"> </span>postgres:18<span class="w">       </span><span class="c1"># دانلود ایمیج</span>
+$<span class="w"> </span>docker<span class="w"> </span>images<span class="w">                 </span><span class="c1"># لیست ایمیج‌های لوکال ⭐</span>
+REPOSITORY<span class="w">   </span>TAG<span class="w">      </span>IMAGE<span class="w"> </span>ID<span class="w">       </span>CREATED<span class="w">        </span>SIZE
+postgres<span class="w">     </span><span class="m">18</span><span class="w">       </span>a1b2c3d4e5f6<span class="w">   </span><span class="m">2</span><span class="w"> </span>weeks<span class="w"> </span>ago<span class="w">    </span>431MB
+nginx<span class="w">        </span>latest<span class="w">   </span>f6e5d4c3b2a1<span class="w">   </span><span class="m">3</span><span class="w"> </span>weeks<span class="w"> </span>ago<span class="w">    </span>188MB
+hello-world<span class="w">  </span>latest<span class="w">   </span>9c7a54a9d43c<span class="w">   </span><span class="m">8</span><span class="w"> </span>months<span class="w"> </span>ago<span class="w">   </span><span class="m">10</span>.1kB
+</code></pre></div>
+
+<p>قانون انتخاب ایمیج برای استفاده (همون تفکر انتخاب پکیج npm):
+- <strong>اون‌هایی با تیک Official Images</strong> (ادامه‌ی <code>library/</code>) — نگهداری رسمی و امن
+- <strong>توضیحات + تعداد pull</strong> بالا
+- <strong>بروز بودن</strong> تگ‌ها</p>
+<h2>۴.۲ — تگ‌ها: نسخه‌های ایمیج ⭐</h2>
+<p>اسم کامل یک ایمیج: <code>registry/owner/name:tag</code> — در عمل:</p>
+<table>
+<thead>
+<tr>
+<th>مثال</th>
+<th>معنی</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>postgres:18</code></td>
+<td>نسخه 18 — ✅ توصیه‌شده برای کار واقعی</td>
+</tr>
+<tr>
+<td><code>postgres:18.4</code></td>
+<td>دقیق‌تر: نسخه 18.4</td>
+</tr>
+<tr>
+<td><code>postgres:latest</code></td>
+<td>«آخرین» — ⚠️ شناور! امروز ۱۸، ماه بعد شاید ۱۹</td>
+</tr>
+<tr>
+<td><code>node:22-alpine</code></td>
+<td>node نسخه 22، واریانت سبک alpine</td>
+</tr>
+<tr>
+<td><code>postgres</code> (بدون تگ)</td>
+<td>= <code>latest</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>🚨 <strong>قانون حرفه‌ای: در هر چیز جدی (compose فایل، Dockerfile، دپلوی) تگ دقیق بزن، نه <code>latest</code>.</strong> چون latest مثل <code>dependencies: "*"</code> در npm است — امروز کار می‌کنه، فردا بدون تغییر کدت می‌شکنه (breaking update خودکار!).</p>
+</blockquote>
+<h2>۴.۳ — لایه‌ها: راز ساختار ایمیج</h2>
+<p>ایمیج یک فایل یکپارچه نیست — <strong>پشته‌ای از لایه‌های فقط‌خواندنی</strong> است. هر دستورِ Dockerfile (فصل ۶) یک لایه جدید می‌سازد:</p>
+<div class="mermaid">
+flowchart TB
+    L4["لایه ۴: npm ci (node_modules)"] --- L3["لایه ۳: کپی کد سورس"] --- L2["لایه ۲: apt-get install ..."] --- L1["لایه ۱: اوبونتو/آلپاین پایه"]
+</div>
+
+<p>سه خاصیت طلایی لایه‌ها:</p>
+<ol>
+<li><strong>کش (Cache):</strong> داکر لایه‌های تغییریافته رو از کش میاره — اگه فقط سورس عوض شد، لایه <code>npm ci</code> دوباره اجرا نمی‌شه (تا وقتی ترتیب دستورها درست باشه — فصل ۷!)</li>
+<li><strong>اشتراک:</strong> دو ایمیج که لایه پایه یکسان دارن (مثلاً هر دو <code>node:22</code>), لایه‌ی مشترک فقط یک‌بار روی دیسکه</li>
+<li><strong>فقط‌خواندن بودن:</strong> لایه‌ها تغییر نمی‌کنن — تغییری یعنی لایه جدید</li>
+</ol>
+<p>ببین لایه‌های یک ایمیج رو:</p>
+<div class="codehilite"><pre><span></span><code>$<span class="w"> </span>docker<span class="w"> </span><span class="nb">history</span><span class="w"> </span>postgres:18
+IMAGE<span class="w">          </span>CREATED<span class="w">       </span>SIZE
+a1b2c3d4e5f6<span class="w">   </span><span class="m">2</span><span class="w"> </span>weeks<span class="w"> </span>ago<span class="w">   </span>45kB
+&lt;missing&gt;<span class="w">      </span><span class="m">2</span><span class="w"> </span>weeks<span class="w"> </span>ago<span class="w">   </span><span class="m">7</span>.2MB<span class="w">      </span>←<span class="w"> </span>هر<span class="w"> </span>خط<span class="w"> </span>یک<span class="w"> </span>لایه
+&lt;missing&gt;<span class="w">      </span><span class="m">2</span><span class="w"> </span>weeks<span class="w"> </span>ago<span class="w">   </span>214MB<span class="w">      </span>←<span class="w"> </span><span class="o">(</span>پایه‌های<span class="w"> </span>بزرگ<span class="w"> </span>در<span class="w"> </span>پایین<span class="o">)</span>
+</code></pre></div>
+
+<h2>۴.۴ — Pull، به‌روزرسانی و حذف</h2>
+<div class="codehilite"><pre><span></span><code>$<span class="w"> </span>docker<span class="w"> </span>pull<span class="w"> </span>node:22-alpine<span class="w">        </span><span class="c1"># فقط دانلود</span>
+$<span class="w"> </span>docker<span class="w"> </span>pull<span class="w"> </span>postgres:18<span class="w">           </span><span class="c1"># دوباره pull = چک آپدیت (لایه‌های جدید را می‌گیرد)</span>
+
+$<span class="w"> </span>docker<span class="w"> </span>rmi<span class="w"> </span>nginx:latest<span class="w">           </span><span class="c1"># حذف ایمیج (remove image)</span>
+$<span class="w"> </span>docker<span class="w"> </span>rmi<span class="w"> </span><span class="k">$(</span>docker<span class="w"> </span>images<span class="w"> </span>-q<span class="k">)</span><span class="w">    </span><span class="c1"># ⚠️ حذف همه (اول docker images نگاه کن!)</span>
+$<span class="w"> </span>docker<span class="w"> </span>image<span class="w"> </span>prune<span class="w">                </span><span class="c1"># ایمیج‌های بدون تگ (dangling) را پاک کن</span>
+$<span class="w"> </span>docker<span class="w"> </span>system<span class="w"> </span>df<span class="w">                  </span><span class="c1"># ⭐ گزارش فضا: ایمیج/کانتینر/ولیوم/کش چقدر خورده‌اند؟</span>
+</code></pre></div>
+
+<p>ارور معروف: <code>image is being used by stopped container</code> — یعنی اول کانتینرهاش رو <code>rm</code> کن. داکر نمی‌ذاره چیزی رو پاک کنی که داره استفاده می‌شه — محافظ خوبیه.</p>
+<h2>۴.۵ — چند ایمیج که دولوپر Next.js می‌شناسه</h2>
+<table>
+<thead>
+<tr>
+<th>ایمیج</th>
+<th>برای چی</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>node:22-alpine</code></td>
+<td>اجرا/build اپ‌های Node — سبک‌ترین و رایج‌ترین</td>
+</tr>
+<tr>
+<td><code>postgres:18</code></td>
+<td>دیتابیس دوره‌ات!</td>
+</tr>
+<tr>
+<td><code>redis:7-alpine</code></td>
+<td>کش و صف — در پروژه‌های بزرگ‌تر</td>
+</tr>
+<tr>
+<td><code>nginx:alpine</code></td>
+<td>reverse proxy / سرو کردن فایل‌های استاتیک</td>
+</tr>
+<tr>
+<td><code>hello-world</code></td>
+<td>تست سلامت نصب</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>💡 <strong>Alpine چیه؟</strong> یک توزیع مینیمال لینوکس (~۵ مگ!) که همه ایمیج‌های رسمی واریانت <code>alpine</code> براش دارن — نصف تا یک‌سوم حجم بقیه. قانون سرانگشتی: برای production، alpine.</p>
+</blockquote>
+<h2>۴.۶ — DIY در Hub: حساب خودت</h2>
+<p>یک اکانت Docker Hub بساز (رایگان) — از فصل ۱۲ (push و دپلوی) لازمش داری. بعدش <code>docker login</code> بزن با همون username.</p>
+<p>و یک قابلیت جالب: <strong>rate limit</strong> — کاربر ناشناس محدودیت pull داره؛ با لاگین رایگان محدودیتت بالاتره. لاگین کردن عادت خوبیه.</p>
+<hr />
+<h2>✅ جمع‌بندی فصل</h2>
+<ul>
+<li>Docker Hub = npm ایمیج‌ها؛ <code>search/pull/images/rmi</code></li>
+<li>تگ دقیق بزن (<code>postgres:18</code>) — <code>latest</code> = <code>*</code> در dependency ها</li>
+<li>ایمیج = پشته لایه‌های فقط‌خواندنی → کش build، اشتراک فضا، تغییرناپذیری</li>
+<li><code>docker system df</code> و <code>image prune</code> = مدیریت فضا</li>
+<li>Alpine = انتخاب پیش‌فرض production</li>
+</ul>
+<h2>📝 تمرین فصل ۴</h2>
+<ol>
+<li><code>docker images</code> بزن — چه ایمیج‌هایی داری؟ حجم کل حدوداً چقدر؟</li>
+<li><code>docker pull node:22-alpine</code> و بعد <code>docker pull node:22</code> — حجمشون رو مقایسه کن (چند برابر فرق داره؟).</li>
+<li><code>docker history node:22-alpine</code> بزن — چند لایه داره؟ بزرگ‌ترین لایه‌اش چیه؟</li>
+<li>یک کانتینر از nginx بساز و متوقفش کن؛ حالا <code>docker rmi nginx</code> بزن و ارور رو بخون — بعد کانتینر رو حذف کن و دوباره rmi.</li>
+<li><code>docker system df</code> رو اجرا کن و گزارشش رو تفسیر کن.</li>
+</ol>
+<details open="open">
+<summary>نکته تمرین ۲ و ۴</summary>
+<p>تمرین ۲: <code>node:22-alpine</code> حدود ۱۵۰MB و <code>node:22</code> حدود ۴۰۰+MB — alpine چند برابر سبک‌تر است.
+تمرین ۴: ارور می‌گوید ایمیج توسط کانتینر متوقف‌شده استفاده شده: <code>docker rm &lt;container-id&gt;</code> بعد <code>docker rmi nginx</code> — داکر وابستگی‌ها را درست مدیریت می‌کند.</p>
+</details>
+<p>➡️ <strong>فصل بعد:</strong> میدون داخل کانتینر — شل بگیر، متغیرها رو ببین، دیباگ کن.</p></section><section class="chapter" id="ch05"><h1>فصل ۵ — داخل کانتینر: exec، متغیرها و دیباگ واقعی</h1>
+<blockquote>
+<p>🎯 <strong>هدف:</strong> یاد بگیری «بروی داخل» کانتینر — شل بگیری، فایل‌ها رو ببینی، متغیرهای محیطی رو چک کنی. این همون مهارتیه که در شرکت، وقتی «کانتینر ارور می‌ده» ازت انتظار دارن.</p>
+</blockquote>
+<hr />
+<h2>۵.۱ — ورود به کانتینر: <code>docker exec -it</code></h2>
+<p>کانتینر = یک لینوکس در حال اجراست — پس می‌شه شل گرفت!</p>
+<div class="codehilite"><pre><span></span><code>$<span class="w"> </span>docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>--name<span class="w"> </span>web<span class="w"> </span>nginx
+
+$<span class="w"> </span>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>web<span class="w"> </span>bash
+root@a1b2c3d4:/#<span class="w">         </span>←<span class="w"> </span>شل<span class="w"> </span>داخل<span class="w"> </span>کانتینر!<span class="w"> </span>حالا<span class="w"> </span>«تویی»
+</code></pre></div>
+
+<p>باز کردن فلگ‌ها (دو کلید طلایی):
+- <code>-i</code> (interactive) = stdin باز نگه دار — بتونی تایپ کنی
+- <code>-t</code> (tty) = ترمینال بساز — prompt و رنگ و رفتار درست</p>
+<p>همیشه با هم: <strong><code>-it</code></strong>. دستور <code>exec</code> برای اجرای یک دستور یا برنامه جدید <em>درون کانتینری است که در حال حاضر اجرا می‌شود</em> (در اینجا اجرای شل <code>bash</code>).</p>
+<p>حالا داخلش بازی کن:</p>
+<div class="codehilite"><pre><span></span><code>root@a1b2c3d4:/#<span class="w"> </span>ls<span class="w">                 </span><span class="c1"># فایل‌سیستم لینوکس ایمیج nginx</span>
+bin<span class="w">   </span>dev<span class="w">   </span>etc<span class="w">   </span>usr<span class="w">   </span>var<span class="w">   </span>...
+
+root@a1b2c3d4:/#<span class="w"> </span>cat<span class="w"> </span>/etc/os-release<span class="w">   </span><span class="c1"># چه توزیعی هستیم؟</span>
+<span class="nv">PRETTY_NAME</span><span class="o">=</span><span class="s2">"Debian GNU/Linux 12 (bookworm)"</span>
+
+root@a1b2c3d4:/#<span class="w"> </span>ps<span class="w"> </span>aux<span class="w">             </span><span class="c1"># پروسه‌های «این کانتینر» — فقط nginx خودش!</span>
+USER<span class="w">  </span>PID<span class="w"> </span>%CPU<span class="w"> </span>COMMAND
+root<span class="w">    </span><span class="m">1</span><span class="w">  </span><span class="m">0</span>.0<span class="w">  </span>nginx:<span class="w"> </span>master<span class="w"> </span>process
+
+root@a1b2c3d4:/#<span class="w"> </span><span class="nb">exit</span><span class="w">               </span><span class="c1"># خروج — کانتینر ادامه می‌دهد اجرا ✅</span>
+</code></pre></div>
+
+<blockquote>
+<p>🔑 نکته‌ی «آهاااا»: <code>ps</code> داخل کانتینر فقط پروسه‌های خودش رو می‌بینه (PID 1 = nginx). این همون ایزوله‌سازی فصل ۱ است — هر کانتینر دنیای خودشه. و نکته دوم: کانتینر <strong>زنده‌ست وقتی پروسه اصلی‌اش زنده‌ست</strong> — exit از شل، کانتینر رو نمی‌کشه.</p>
+</blockquote>
+<h2>۵.۲ — بدون ورود: exec برای یک دستور</h2>
+<p>برای کارهای سریع لازم نیست وارد بشی:</p>
+<div class="codehilite"><pre><span></span><code>$<span class="w"> </span>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>web<span class="w"> </span>cat<span class="w"> </span>/etc/nginx/nginx.conf<span class="w">      </span><span class="c1"># فایل کانفیگ nginx را بخوان</span>
+$<span class="w"> </span>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>web<span class="w"> </span>ls<span class="w"> </span>/usr/share/nginx/html<span class="w">       </span><span class="c1"># فایل‌های سایت</span>
+$<span class="w"> </span>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>web<span class="w"> </span>env<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span>nginx<span class="w">            </span><span class="c1"># متغیرهای محیطی‌اش</span>
+</code></pre></div>
+
+<h2>۵.۳ — دیباگ واقعی: چرا کانتینرم بالا نمیاد؟</h2>
+<p>چرخه‌ی استاندارد دیباگ (این رو حفظ کن — در شرکت هر هفته لازمه):</p>
+<div class="codehilite"><pre><span></span><code>$<span class="w"> </span>docker<span class="w"> </span>ps<span class="w"> </span>-a<span class="w">                      </span><span class="c1"># ۱) کانتینر هست؟ وضعیتش چیه؟</span>
+<span class="c1"># Exited (1) — یعنی کرش کرده و پروسه با کد خطای ۱ خارج شده (exit code 1)</span>
+
+$<span class="w"> </span>docker<span class="w"> </span>logs<span class="w"> </span>--tail<span class="w"> </span><span class="m">50</span><span class="w"> </span>my-app<span class="w">     </span><span class="c1"># ۲) لاگ — ۹۰٪ جواب اینجاست</span>
+
+$<span class="w"> </span>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>my-app<span class="w"> </span>sh<span class="w">        </span><span class="c1"># ۳) داخل شو و دستی تست کن</span>
+<span class="c1"># (کانتینر مرده؟ از روی ایمیجش یک کانتینر موقت بزن: docker run -it --entrypoint sh node:22-alpine)</span>
+
+$<span class="w"> </span>docker<span class="w"> </span>inspect<span class="w"> </span>my-app<span class="w">            </span><span class="c1"># ۴) همه جزئیات: پورت‌ها، env، مانت‌ها</span>
+</code></pre></div>
+
+<blockquote>
+<p>⚠️ نکته‌ی <code>sh</code> به جای <code>bash</code>: ایمیج‌های alpine برای سبکی، bash ندارن — <code>sh</code> دارن. اگه <code>exec -it x bash</code> ارور داد، alpine اس؛ <code>sh</code> بزن.</p>
+</blockquote>
+<h2>۵.۴ — <code>docker inspect</code>: شناسنامه کانتینر</h2>
+<p>خروجی JSON بزرگه — با ابزارهای شل فیلترش کن:</p>
+<div class="codehilite"><pre><span></span><code>$<span class="w"> </span>docker<span class="w"> </span>inspect<span class="w"> </span>my-web<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-A<span class="w"> </span><span class="m">5</span><span class="w"> </span><span class="s2">"PortBindings"</span>
+$<span class="w"> </span>docker<span class="w"> </span>inspect<span class="w"> </span>--format<span class="w"> </span><span class="s1">'{{.Config.Image}}'</span><span class="w"> </span>my-web<span class="w">     </span><span class="c1"># nginx</span>
+$<span class="w"> </span>docker<span class="w"> </span>inspect<span class="w"> </span>--format<span class="w"> </span><span class="s1">'{{.State.Status}}'</span><span class="w"> </span>my-web<span class="w">     </span><span class="c1"># running</span>
+</code></pre></div>
+
+<p>(چیز مفیدی دیدی؟ <code>--format</code> با template — مثل template literal ها.)</p>
+<h2>۵.۵ — کپی فایل بین میزبان و کانتینر</h2>
+<div class="codehilite"><pre><span></span><code>$<span class="w"> </span>docker<span class="w"> </span>cp<span class="w"> </span>my-web:/usr/share/nginx/html/index.html<span class="w"> </span>./<span class="w">      </span><span class="c1"># از کانتینر به سیستم</span>
+$<span class="w"> </span>docker<span class="w"> </span>cp<span class="w"> </span>./new-page.html<span class="w"> </span>my-web:/usr/share/nginx/html/<span class="w">   </span><span class="c1"># از سیستم به کانتینر</span>
+</code></pre></div>
+
+<p>(مشابه انتقال فایل در لینوکس یا شبکه.) برای دیباگ/استخراج لاگ/گرفتن فایل کانفیگ عالیه. ⚠️ ولی توجه: این تغییر <em>فقط در این کانتینر</em> است — کانتینر rm شه می‌پره. راه درست ماندگاری = volume (فصل ۹) و راه درست تغییر ایمیج = Dockerfile (فصل ۶).</p>
+<h2>۵.۶ — متغیرهای محیطی از نگاه داخل</h2>
+<p>امتحان کن (از فصل ۳):</p>
+<div class="codehilite"><pre><span></span><code>$<span class="w"> </span>docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>--name<span class="w"> </span>db<span class="w"> </span>-e<span class="w"> </span><span class="nv">POSTGRES_PASSWORD</span><span class="o">=</span>secret<span class="w"> </span>-e<span class="w"> </span><span class="nv">APP_MODE</span><span class="o">=</span>dev<span class="w"> </span>postgres:18
+
+$<span class="w"> </span>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>db<span class="w"> </span>env<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s2">"POSTGRES|APP_MODE"</span>
+<span class="nv">POSTGRES_PASSWORD</span><span class="o">=</span>secret
+<span class="nv">APP_MODE</span><span class="o">=</span>dev
+</code></pre></div>
+
+<p>این دقیقاً همان مقادیری است که برنامه از طریق <code>process.env</code> دریافت می‌کند — جریان کانفیگ: <code>-e</code> یا فایل env → متغیر محیطی کانتینر → برنامه داخلش می‌خونه. (در فصل ۸ همینو با compose حرفه‌ای‌تر می‌کنیم.)</p>
+<hr />
+<h2>✅ جمع‌بندی فصل</h2>
+<ul>
+<li><code>docker exec -it &lt;name&gt; bash</code> = ورود؛ <code>sh</code> برای ایمیج‌های alpine</li>
+<li>داخل کانتینر: دنیای خودش — <code>ps</code> فقط پروسه‌های خودش را می‌بیند</li>
+<li>چرخه دیباگ: <code>ps -a</code> → <code>logs</code> → <code>exec</code> → <code>inspect</code></li>
+<li><code>docker cp</code> = انتقال فایل بین میزبان و کانتینر (موقتی — دائمی‌اش volume/Dockerfile)</li>
+<li>کانفیگ از بیرون = <code>-e</code> → <code>env</code> داخل کانتینر → برنامه می‌خواند</li>
+</ul>
+<h2>📝 تمرین فصل ۵</h2>
+<ol>
+<li>nginx اجرا کن، واردش شو (<code>exec -it ... bash</code>)، نسخه Debian را بخوان، <code>nginx -v</code> را اجرا کن و خارج شو.</li>
+<li>با <code>docker exec</code> (بدون ورود) فایل <code>/etc/nginx/nginx.conf</code> را بخوان و با <code>grep</code> عبارت <code>server {</code> را در آن پیدا کن.</li>
+<li>یک کانتینر با دو متغیر محیطی بساز (<code>-e GREETING="سلام" -e ENV_NAME=test</code>) و از داخلش <code>env</code> بزن و هر دو را ببین.</li>
+<li>چالش دیباگ ⭐: یک کانتینر بنویس که کرش کنه: <code>docker run --name crasher alpine sh -c "echo boom; exit 1"</code> — حالا چرخه دیباگ را کامل اجرا کن: ps -a (کد خروج؟) → logs (چه گفت؟) → و در آخر rm کن.</li>
+<li>یک فایل از کانتینر nginx به سیستم کپی کن و محتواش را cat کن.</li>
+</ol>
+<details open="open">
+<summary>جواب تمرین ۴</summary>
+<div class="codehilite"><pre><span></span><code>docker<span class="w"> </span>run<span class="w"> </span>--name<span class="w"> </span>crasher<span class="w"> </span>alpine<span class="w"> </span>sh<span class="w"> </span>-c<span class="w"> </span><span class="s2">"echo boom; exit 1"</span>
+docker<span class="w"> </span>ps<span class="w"> </span>-a<span class="w"> </span>--filter<span class="w"> </span><span class="nv">name</span><span class="o">=</span>crasher<span class="w">     </span><span class="c1"># وضعیت: Exited (1) ← کد خروج ۱</span>
+docker<span class="w"> </span>logs<span class="w"> </span>crasher<span class="w">                    </span><span class="c1"># خروجی: boom</span>
+docker<span class="w"> </span>rm<span class="w"> </span>crasher
+</code></pre></div>
+
+</details>
+<p>➡️ <strong>فصل بعد:</strong> ساخت اولین Dockerfile و بسته‌بندی یک پروژه وب!</p></section><section class="chapter" id="ch06"><h1>فصل ۶ — اولین Dockerfile: بسته‌بندی اپ Node خودت</h1>
+<blockquote>
+<p>🎯 <strong>هدف:</strong> تا حالا ایمیج‌های <em>دیگران</em> رو اجرا کردی؛ حالا <strong>ایمیج خودت</strong> رو می‌سازی. یک اپ Node ساده رو قدم‌به‌قدم در Dockerfile بسته‌بندی می‌کنیم — خط به خط، با چرایی هر دستور.</p>
+</blockquote>
+<hr />
+<h2>۶.۱ — Dockerfile چیه؟</h2>
+<p><strong>Dockerfile = دستور پخت ایمیج تو.</strong> یک فایل متنی که می‌گه: از چه پایه‌ای شروع کن، چه فایل‌هایی بیار، چه نصب‌هایی کن، و در آخر چه دستوری اجرا شه. داکر از رویش ایمیج می‌سازه:</p>
+<div class="mermaid">
+flowchart LR
+    D["Dockerfile<br/>(دستور پخت)"] -->|"docker build"| I["Image<br/>(اپ تو + محیطش)"] -->|"docker run"| C["Container<br/>(در حال اجرا)"]
+</div>
+
+<p>(مثل فرق recipe و غذای آماده: Dockerfile دستوره، ایمیج غذای بسته‌بندی‌شده‌ی تکرارپذیره.)</p>
+<h2>۶.۲ — اپ نمونه: یک API مینیمال</h2>
+<p>یک پوشه بساز: <code>~/docker-playground/myapi</code> و دو فایل:</p>
+<p><strong><code>package.json</code>:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"myapi"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0.0"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"scripts"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"start"</span><span class="p">:</span><span class="w"> </span><span class="s2">"node server.js"</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">"dependencies"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"express"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^5.0.0"</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p><strong><code>server.js</code>:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="kd">const</span><span class="w"> </span><span class="nx">express</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">require</span><span class="p">(</span><span class="s2">"express"</span><span class="p">);</span>
+<span class="kd">const</span><span class="w"> </span><span class="nx">app</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">express</span><span class="p">();</span>
+
+<span class="nx">app</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">"/"</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="nx">req</span><span class="p">,</span><span class="w"> </span><span class="nx">res</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">({</span><span class="w"> </span><span class="nx">message</span><span class="o">:</span><span class="w"> </span><span class="s2">"سلام از داخل کانتینر! 🐳"</span><span class="p">,</span><span class="w"> </span><span class="nx">host</span><span class="o">:</span><span class="w"> </span><span class="nx">require</span><span class="p">(</span><span class="s2">"os"</span><span class="p">).</span><span class="nx">hostname</span><span class="p">()</span><span class="w"> </span><span class="p">});</span>
+<span class="p">});</span>
+
+<span class="nx">app</span><span class="p">.</span><span class="nx">listen</span><span class="p">(</span><span class="mf">3000</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">"API روی پورت 3000 بالا آمد"</span><span class="p">));</span>
+</code></pre></div>
+
+<h2>۶.۳ — اولین Dockerfile (خط به خط)</h2>
+<p>فایل <code>Dockerfile</code> (بدون پسوند) در همین پوشه:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">FROM</span><span class="w"> </span><span class="s">node:22-alpine</span>
+
+<span class="k">WORKDIR</span><span class="w"> </span><span class="s">/app</span>
+
+<span class="k">COPY</span><span class="w"> </span>package.json<span class="w"> </span>./
+
+<span class="k">RUN</span><span class="w"> </span>npm<span class="w"> </span>install
+
+<span class="k">COPY</span><span class="w"> </span>.<span class="w"> </span>.
+
+<span class="k">EXPOSE</span><span class="w"> </span><span class="s">3000</span>
+
+<span class="k">CMD</span><span class="w"> </span><span class="p">[</span><span class="s2">"node"</span><span class="p">,</span><span class="w"> </span><span class="s2">"server.js"</span><span class="p">]</span>
+</code></pre></div>
+
+<p>خط به خط:</p>
+<table>
+<thead>
+<tr>
+<th>دستور</th>
+<th>کار</th>
+<th>چرا</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>FROM node:22-alpine</code></td>
+<td>ایمیج پایه — از اینجا شروع کن</td>
+<td>Node 22 + لینوکس مینیمال؛ ما از صفر OS نمی‌سازیم!</td>
+</tr>
+<tr>
+<td><code>WORKDIR /app</code></td>
+<td>پوشه کاری داخل کانتینر</td>
+<td>مثل <code>cd /app</code> — همه دستورات بعدی اونجا</td>
+</tr>
+<tr>
+<td><code>COPY package.json ./</code></td>
+<td>فقط فایل‌های وابستگی رو بیار</td>
+<td>⭐ راز کش — بخش ۶.۵</td>
+</tr>
+<tr>
+<td><code>RUN npm install</code></td>
+<td><em>حین build</em> اجرا کن (نصب وابستگی‌ها)</td>
+<td>نتیجه در لایه ایمیج ذخیره می‌شه</td>
+</tr>
+<tr>
+<td><code>COPY . .</code></td>
+<td>حالا کل سورس رو بیار</td>
+<td>آخر از همه تا با هر تغییر کد، نصب مجدد نشه!</td>
+</tr>
+<tr>
+<td><code>EXPOSE 3000</code></td>
+<td>مستندسازی: «این اپ روی ۳۰۰۰ گوش می‌ده»</td>
+<td>⚠️ پورت رو باز نمی‌کنه! فقط متادیتا — باز کردن با <code>-p</code> موقع run</td>
+</tr>
+<tr>
+<td>`CMD ["node", "server.js"]</td>
+<td><em>موقع run</em> اجرا کن</td>
+<td>پروسه اصلی کانتینر — هر کانتینر یک CMD</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>🔑 مهم‌ترین تفاوت: <strong>RUN</strong> موقع build (در ایمیج ثبت می‌شه)، <strong>CMD</strong> موقع run (پروسه اصلی). فرقشون مثل «نصب برنامه» و «اجرا کردن برنامه» است.</p>
+</blockquote>
+<h2>۶.۴ — build و run: لحظه حقیقت</h2>
+<p>در Git Bash، داخل پوشه <code>myapi</code>:</p>
+<div class="codehilite"><pre><span></span><code>$<span class="w"> </span>docker<span class="w"> </span>build<span class="w"> </span>-t<span class="w"> </span>myapi:1.0<span class="w"> </span>.
+<span class="c1">#        ↑ اسم:تگ خودم   ↑ مسیر build context (نقطه = همین پوشه)</span>
+<span class="o">[</span>+<span class="o">]</span><span class="w"> </span>Building<span class="w"> </span><span class="m">23</span>.4s<span class="w"> </span><span class="o">(</span><span class="m">10</span>/10<span class="o">)</span><span class="w"> </span><span class="nv">FINISHED</span>
+<span class="w"> </span><span class="o">=</span>&gt;<span class="w"> </span><span class="o">[</span><span class="m">4</span>/6<span class="o">]</span><span class="w"> </span>RUN<span class="w"> </span>npm<span class="w"> </span>install<span class="w">              </span>←<span class="w"> </span>نصب<span class="w"> </span>وابستگی‌ها
+<span class="w"> </span><span class="o">=</span>&gt;<span class="w"> </span><span class="o">[</span><span class="m">6</span>/6<span class="o">]</span><span class="w"> </span>CMD<span class="w"> </span><span class="o">[</span><span class="s2">"node"</span>,<span class="s2">"server.js"</span><span class="o">]</span><span class="w">     </span>←<span class="w"> </span>لایه‌ها<span class="w"> </span>ساخته<span class="w"> </span><span class="nv">شدند</span>
+<span class="w"> </span><span class="o">=</span>&gt;<span class="w"> </span>naming<span class="w"> </span>to<span class="w"> </span>docker.io/library/myapi:1.0
+
+$<span class="w"> </span>docker<span class="w"> </span>images<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>myapi
+myapi<span class="w">   </span><span class="m">1</span>.0<span class="w">   </span>a1b2c3d4e5f6<span class="w">   </span><span class="m">10</span><span class="w"> </span>seconds<span class="w"> </span>ago<span class="w">   </span>132MB
+
+$<span class="w"> </span>docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>-p<span class="w"> </span><span class="m">3000</span>:3000<span class="w"> </span>--name<span class="w"> </span>api<span class="w"> </span>myapi:1.0
+
+$<span class="w"> </span>curl<span class="w"> </span>http://localhost:3000
+<span class="o">{</span><span class="s2">"message"</span>:<span class="s2">"سلام از داخل کانتینر! 🐳"</span>,<span class="s2">"host"</span>:<span class="s2">"a1b2c3d4e5f6"</span><span class="o">}</span>
+</code></pre></div>
+
+<p>اپ <strong>خودت</strong> الان توی کانتینره: Node نصب، وابستگی‌ها نصب، و روی هر سیستمی همون‌طور اجرا می‌شه. <code>host</code> در پاسخ = ID کانتینره (hostname داخل ایزوله‌سازی).</p>
+<h2>۶.۵ — کش لایه‌ها: چرا ترتیب دستورها مهمه ⭐</h2>
+<p>سورس رو عوض کن (پیام API رو) و دوباره build بزن:</p>
+<div class="codehilite"><pre><span></span><code>$<span class="w"> </span>docker<span class="w"> </span>build<span class="w"> </span>-t<span class="w"> </span>myapi:1.0<span class="w"> </span>.
+<span class="o">=</span>&gt;<span class="w"> </span><span class="o">[</span><span class="m">3</span>/6<span class="o">]</span><span class="w"> </span>COPY<span class="w"> </span>package.json<span class="w"> </span>./<span class="w">          </span>✓<span class="w"> </span><span class="nv">CACHED</span>
+<span class="o">=</span>&gt;<span class="w"> </span><span class="o">[</span><span class="m">4</span>/6<span class="o">]</span><span class="w"> </span>RUN<span class="w"> </span>npm<span class="w"> </span>install<span class="w">               </span>✓<span class="w"> </span>CACHED<span class="w">    </span>←<span class="w"> </span>🎉<span class="w"> </span>نصب<span class="w"> </span>نشد<span class="w"> </span>دوباره!
+<span class="o">=</span>&gt;<span class="w"> </span><span class="o">[</span><span class="m">5</span>/6<span class="o">]</span><span class="w"> </span>COPY<span class="w"> </span>.<span class="w"> </span>.<span class="w">                      </span><span class="o">(</span>جدید<span class="w"> </span>—<span class="w"> </span>چون<span class="w"> </span>سورس<span class="w"> </span>عوض<span class="w"> </span>شد<span class="o">)</span>
+</code></pre></div>
+
+<p>چون <code>package.json</code> تغییر نکرده، لایه‌های نصب از کش اومدن — build از ۲۳ ثانیه به ۱ ثانیه. <strong>قانون طلایی Dockerfile:</strong> چیزهای به‌ندرت‌تغییرشونده بالا، چیزهای پرتغییرشونده (سورس) پایین. همون ایمیج که نوشتی درست همین کارو کرد.</p>
+<h2>۶.۶ — .dockerignore: مثل .gitignore</h2>
+<p>قبل از build، داکر کل پوشه رو به build context می‌فرسته — شامل <code>node_modules</code> (صد مگ!) و <code>.git</code>. فایل <code>.dockerignore</code> (کنار Dockerfile):</p>
+<div class="codehilite"><pre><span></span><code>node_modules
+.git
+.env
+*.log
+Dockerfile
+.dockerignore
+</code></pre></div>
+
+<p>بدون این، <code>COPY . .</code> همه چیز رو داخل ایمیج می‌ریزه (شامل node_modules لوکال که با مک/ویندوز ناسازگاره!) و <code>.env</code> هم لو می‌ره. <strong>از همین امروز: هر پروژه‌ی داکری .dockerignore داره. همیشه.</strong></p>
+<hr />
+<h2>✅ جمع‌بندی فصل</h2>
+<ul>
+<li>Dockerfile = دستور پخت؛ <code>docker build -t name:tag .</code> → ایمیج؛ <code>run</code> → کانتینر</li>
+<li>هفت دستور پایه: FROM / WORKDIR / COPY / RUN / EXPOSE / CMD (+ ENV از فصل قبل)</li>
+<li>RUN = حین build؛ CMD = پروسه حین run؛ EXPOSE فقط مستند</li>
+<li><strong>ترتیب = کش:</strong> وابستگی‌ها اول، سورس آخر</li>
+<li><code>.dockerignore</code> همیشه: node_modules و .env و .git</li>
+</ul>
+<h2>📝 تمرین فصل ۶</h2>
+<ol>
+<li>اپ <code>myapi</code> را دقیقاً مثل فصل بساز، build و run کن و با curl تست کن.</li>
+<li>پیام JSON را عوض کن (مثلاً اسمت را اضافه کن) و دوباره build — ببین کدام لایه‌ها CACHED شدند.</li>
+<li><code>EXPOSE 3000</code> را از Dockerfile حذف کن، rebuild و بدون فلگ <code>-p</code> اجرا کن — curl کار می‌کند؟ چرا؟ (بعد برگردون!)</li>
+<li><code>.dockerignore</code> بساز و با <code>docker build</code> دوباره — تفاوت سرعت/اندازه را با <code>docker images</code> ببین.</li>
+<li>چالش: یک Dockerfile برای یک فایل اسکریپت ساده بنویس (فقط <code>node script.js</code> که یک console.log دارد) — از ایمیش <code>node:22-alpine</code> و بدون npm install.</li>
+</ol>
+<details open="open">
+<summary>جواب تمرین ۳ و ۵</summary>
+<p>تمرین ۳: نه — curl fail می‌شود (connection refused). EXPOSE پورت را باز نمی‌کند؛ فقط مستندسازی است. کانتینر اجرا شده ولی از دنیای بیرون قابل دسترس نیست مگر با <code>-p</code>. (داخل کانتینر با exec و curl/wget می‌شد دیدش!)
+تمرین ۵:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">FROM</span><span class="w"> </span><span class="s">node:22-alpine</span>
+<span class="k">WORKDIR</span><span class="w"> </span><span class="s">/app</span>
+<span class="k">COPY</span><span class="w"> </span>script.js<span class="w"> </span>.
+<span class="k">CMD</span><span class="w"> </span><span class="p">[</span><span class="s2">"node"</span><span class="p">,</span><span class="w"> </span><span class="s2">"script.js"</span><span class="p">]</span>
+</code></pre></div>
+
+</details>
+<p>➡️ <strong>فصل بعد:</strong> ایمیج را حرفه‌ای کن — multi-stage و کاهش چشمگیر حجم.</p></section><section class="chapter" id="ch07"><h1>فصل ۷ — ایمیج تمیز: multi-stage و کاهش حجم</h1>
+<blockquote>
+<p>🎯 <strong>هدف:</strong> Dockerfile فصل ۶ کار می‌کنه ولی «مبتدیانه» است. یاد می‌گیری چرا ایمیج‌های Node معمولی چاق‌ان، و با <strong>multi-stage build</strong> اون‌ها رو به ایمیج‌های تمیز production تبدیل کنی — همون چیزی که در Dockerfile های شرکت‌ها می‌بینی.</p>
+</blockquote>
+<hr />
+<h2>۷.۱ — مشکل: ایمیج من چرا اینقدر چاقه؟</h2>
+<p>ایمیج <code>myapi</code> فصل قبل ۱۳۲MB بود برای یک API ده‌خطی! چرا؟ چون <strong>همه‌چیز تو اونه:</strong></p>
+<table>
+<thead>
+<tr>
+<th>چی داخلشه</th>
+<th>حجم</th>
+<th>ولی برای اجرا لازمه؟</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>لایه پایه alpine + Node</td>
+<td>~۱۲۰MB</td>
+<td>✅ بله</td>
+</tr>
+<tr>
+<td>npm cache (باگ یا نه، npm کش می‌سازه)</td>
+<td>ده‌ها MB</td>
+<td>❌ نه</td>
+</tr>
+<tr>
+<td>node_modules شامل devDependencies</td>
+<td>عظیم</td>
+<td>❌ نه — فقط برای build/test</td>
+</tr>
+<tr>
+<td>کد سورس کامل</td>
+<td>کم</td>
+<td>⚠️ در production فقط خروجی build لازمه</td>
+</tr>
+</tbody>
+</table>
+<p>و برای Next.js بدتر: در build به همه devDependencies نیاز داری، ولی برای <em>اجرا</em> فقط خروجی <code>.next</code> + وابستگی‌های production لازمه.</p>
+<h2>۷.۲ — راه‌حل: Multi-Stage Build ⭐</h2>
+<p>فکرش ساده‌ست: <strong>دو مرحله — یکی برای build (می‌تونه چاق باشه)، یکی برای اجرا (فقط خروجی رو می‌بره).</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c"># ─── مرحله ۱: build (ابزارهای سنگین اینجاست) ───</span>
+<span class="k">FROM</span><span class="w"> </span><span class="s">node:22-alpine</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="s">builder</span>
+<span class="k">WORKDIR</span><span class="w"> </span><span class="s">/app</span>
+<span class="k">COPY</span><span class="w"> </span>package*.json<span class="w"> </span>./
+<span class="k">RUN</span><span class="w"> </span>npm<span class="w"> </span>install
+<span class="k">COPY</span><span class="w"> </span>.<span class="w"> </span>.
+<span class="k">RUN</span><span class="w"> </span>npm<span class="w"> </span>run<span class="w"> </span>build
+
+<span class="c"># ─── مرحله ۲: production (فقط خروجی) ───</span>
+<span class="k">FROM</span><span class="w"> </span><span class="s">node:22-alpine</span>
+<span class="k">WORKDIR</span><span class="w"> </span><span class="s">/app</span>
+
+<span class="k">COPY</span><span class="w"> </span>package*.json<span class="w"> </span>./
+<span class="k">RUN</span><span class="w"> </span>npm<span class="w"> </span>install<span class="w"> </span>--omit<span class="o">=</span>dev<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>npm<span class="w"> </span>cache<span class="w"> </span>clean<span class="w"> </span>--force
+
+<span class="k">COPY</span><span class="w"> </span>--from<span class="o">=</span>builder<span class="w"> </span>/app/dist<span class="w"> </span>./dist
+
+<span class="k">EXPOSE</span><span class="w"> </span><span class="s">3000</span>
+<span class="k">CMD</span><span class="w"> </span><span class="p">[</span><span class="s2">"node"</span><span class="p">,</span><span class="w"> </span><span class="s2">"dist/server.js"</span><span class="p">]</span>
+</code></pre></div>
+
+<p>خط به خط چیزهای جدید:</p>
+<table>
+<thead>
+<tr>
+<th>دستور</th>
+<th>کار</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>AS builder</code></td>
+<td>اسم‌گذاری مرحله اول</td>
+</tr>
+<tr>
+<td><code>npm install --omit=dev</code></td>
+<td>فقط وابستگی‌های production (بدون devDependencies مثل TypeScript و eslint)</td>
+</tr>
+<tr>
+<td><code>npm cache clean --force</code></td>
+<td>حذف کش npm از همون لایه — جلوگیری از قچاق شدن ایمیج</td>
+</tr>
+<tr>
+<td><code>COPY --from=builder /app/dist ./dist</code></td>
+<td>⭐ جادو: فقط پوشه خروجی رو از مرحله build بکش بیرون</td>
+</tr>
+</tbody>
+</table>
+<p>نتیجه: مرحله builder (با typescript، eslint، کش‌ها و...) <strong>دور انداخته می‌شه</strong> — ایمیج نهایی فقط runtime است. حجم معمولاً از صدها مگ به ده‌ها مگ می‌رسه (۳-۵ برابر کوچیک‌تر).</p>
+<blockquote>
+<p>🔑 چرا امن‌تر هم هست؟ چون سورس کامل، devDependencies و ابزارهای build تو ایمیج نهایی نیستن — سطح حمله کمتر. (این جمله رو در مصاحبه بگو، امتیاز می‌گیری 😄)</p>
+</blockquote>
+<h2>۷.۳ — Next.js واقعی (الگوی رسمی)</h2>
+<p>الگوی multi-stage برای Next.js (که خود Next.js در مستنداتش هم می‌ده — با <code>output: "standalone"</code> در next.config):</p>
+<div class="codehilite"><pre><span></span><code><span class="k">FROM</span><span class="w"> </span><span class="s">node:22-alpine</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="s">builder</span>
+<span class="k">WORKDIR</span><span class="w"> </span><span class="s">/app</span>
+<span class="k">COPY</span><span class="w"> </span>package*.json<span class="w"> </span>./
+<span class="k">RUN</span><span class="w"> </span>npm<span class="w"> </span>ci
+<span class="k">COPY</span><span class="w"> </span>.<span class="w"> </span>.
+<span class="k">RUN</span><span class="w"> </span>npm<span class="w"> </span>run<span class="w"> </span>build
+
+<span class="k">FROM</span><span class="w"> </span><span class="s">node:22-alpine</span>
+<span class="k">WORKDIR</span><span class="w"> </span><span class="s">/app</span>
+<span class="k">ENV</span><span class="w"> </span><span class="nv">NODE_ENV</span><span class="o">=</span>production
+<span class="k">COPY</span><span class="w"> </span>--from<span class="o">=</span>builder<span class="w"> </span>/app/public<span class="w"> </span>./public
+<span class="k">COPY</span><span class="w"> </span>--from<span class="o">=</span>builder<span class="w"> </span>/app/.next/standalone<span class="w"> </span>./
+<span class="k">COPY</span><span class="w"> </span>--from<span class="o">=</span>builder<span class="w"> </span>/app/.next/static<span class="w"> </span>./.next/static
+
+<span class="k">EXPOSE</span><span class="w"> </span><span class="s">3000</span>
+<span class="k">CMD</span><span class="w"> </span><span class="p">[</span><span class="s2">"node"</span><span class="p">,</span><span class="w"> </span><span class="s2">"server.js"</span><span class="p">]</span>
+</code></pre></div>
+
+<ul>
+<li><code>npm ci</code> به جای <code>npm install</code>: نصب دقیق از <code>package-lock.json</code> — سریع‌تر و تکرارپذیر (مثل قفل شدن نسخه‌ها).</li>
+</ul>
+<h2>۷.۴ — چند قانون طلایی حجم</h2>
+<table>
+<thead>
+<tr>
+<th>قانون</th>
+<th>چرا</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>پایه alpine/slim</td>
+<td>پایه ۱۲۰MB → ۵۰MB</td>
+</tr>
+<tr>
+<td><code>RUN</code> های مرتبط رو با <code>&amp;&amp;</code> یکی کن</td>
+<td>هر RUN یک لایه — لایه حذف‌شده فضا آزاد نمی‌کنه!</td>
+</tr>
+<tr>
+<td><code>npm cache clean</code> در <strong>همین</strong> RUN</td>
+<td>فایل اضافه‌شده در لایه قبلی، در لایه بعد پاک نمی‌شه</td>
+</tr>
+<tr>
+<td><code>npm ci --omit=dev</code> در آخرین مرحله</td>
+<td>devDependencies نریز</td>
+</tr>
+<tr>
+<td>چند stage در صورت نیاز</td>
+<td>فایل‌های build از ایمیج نهایی بیرون می‌مونن</td>
+</tr>
+</tbody>
+</table>
+<p>نمونه‌ی قانون «یکی‌کردن RUN»:</p>
+<div class="codehilite"><pre><span></span><code><span class="c"># ❌ کش npm در لایه قبلی می‌ماند:</span>
+<span class="k">RUN</span><span class="w"> </span>npm<span class="w"> </span>install
+<span class="k">RUN</span><span class="w"> </span>npm<span class="w"> </span>cache<span class="w"> </span>clean<span class="w"> </span>--force
+
+<span class="c"># ✅ همه در یک لایه — پاک‌سازی داخل همان لایه:</span>
+<span class="k">RUN</span><span class="w"> </span>npm<span class="w"> </span>install<span class="w"> </span>--omit<span class="o">=</span>dev<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>npm<span class="w"> </span>cache<span class="w"> </span>clean<span class="w"> </span>--force
+</code></pre></div>
+
+<h2>۷.۵ — measure: چطوری بفهمم چقدر لاغر شد؟</h2>
+<div class="codehilite"><pre><span></span><code>$<span class="w"> </span>docker<span class="w"> </span>build<span class="w"> </span>-t<span class="w"> </span>myapi:2.0<span class="w"> </span>.
+$<span class="w"> </span>docker<span class="w"> </span>images<span class="w"> </span>myapi
+myapi<span class="w">   </span><span class="m">1</span>.0<span class="w">   </span>...<span class="w">   </span>132MB<span class="w">      </span>←<span class="w"> </span>نسخه<span class="w"> </span>تک‌مرحله‌ای
+myapi<span class="w">   </span><span class="m">2</span>.0<span class="w">   </span>...<span class="w">   </span>96MB<span class="w">       </span>←<span class="w"> </span>بعد<span class="w"> </span>از<span class="w"> </span>multi-stage<span class="w"> </span>+<span class="w"> </span><span class="nv">omit</span><span class="o">=</span>dev
+
+<span class="c1"># جزئیات لایه به لایه:</span>
+$<span class="w"> </span>docker<span class="w"> </span><span class="nb">history</span><span class="w"> </span>myapi:2.0
+</code></pre></div>
+
+<p>و ابزار تحلیل حرفه‌ای: <code>dive</code> (github.com/wagoodman/dive) — داخل ایمیج رو لایه‌به‌لایه نشون می‌ده و می‌گه چه چیزی هدر رفته. (فعلاً فقط اسمش رو بدونی کافیه.)</p>
+<hr />
+<h2>✅ جمع‌بندی فصل</h2>
+<ul>
+<li>ایمیج چاق = ابزارهای build + devDeps + کش‌ها داخل ایمیج نهایی</li>
+<li><strong>Multi-stage:</strong> مرحله builder (چاق، دور انداخته می‌شود) → مرحله final (فقط خروجی + runtime)</li>
+<li><code>COPY --from=builder</code> = انتقال فقط خروجی؛ <code>npm ci --omit=dev</code> = فقط production deps</li>
+<li>پاک‌سازی باید <strong>داخل همان RUN</strong> باشد (لایه‌ها فقط‌خواندن‌اند)</li>
+<li>حجم کمتر = دپلوی سریع‌تر + سطح حمله کمتر</li>
+</ul>
+<h2>📝 تمرین فصل ۷</h2>
+<ol>
+<li>Dockerfile فصل ۶ را به multi-stage تبدیل کن (حتی اگر اپ build ندارد — یک مرحله deps و یک مرحله runtime با <code>--omit=dev</code>) و فرق حجم را با <code>docker images</code> ببین.</li>
+<li>در Dockerfile، دو <code>RUN</code> پشت هم بنویس (نصب + پاک‌سازی جدا) و بعد <code>docker history</code> بزن — لایه پاک‌سازی را پیدا کن. چرا SIZE اش 0 یا کم است ولی فضا آزاد نشده؟ (جواب: فایل‌های حذف‌شده در لایه قبلی زنده‌ان!)</li>
+<li><code>npm ci</code> رو جایگزین <code>npm install</code> کن — اگه package-lock نداری، اول یک بار <code>npm install</code> لوکال بزن تا ساخته شه.</li>
+<li>چالش: Dockerfile مربوط به Next.js در بخش ۷.۳ را روی یک پروژه Next.js امتحان کن (<code>output: 'standalone'</code> را به <code>next.config.js</code> اضافه کن) و تغییر حجم ایمیج را بررسی کن.</li>
+</ol>
+<details open="open">
+<summary>جواب تمرین ۲</summary>
+<p>لایه‌ها فقط‌خواندنی و انباشته‌اند: اگر در لایه ۱ فایل ۱۰۰MB بسازی و در لایه ۲ حذفش کنی، فایل در لایه ۱ هنوز هست — ایمیج نهایی هر دو لایه را حمل می‌کند (فقط دیده نمی‌شود). پاک‌سازی باید در همان لایه‌ای انجام شود که فایل ساخته شده (با <code>&amp;&amp;</code>).</p>
+</details>
+<p>➡️ <strong>فصل بعد:</strong> وقتی چند کانتینر لازم داری (اپ + دیتابیس + ...) — Docker Compose!</p></section><section class="chapter" id="ch08"><h1>فصل ۸ — Docker Compose: کل استک با یک دستور ⭐</h1>
+<blockquote>
+<p>🎯 <strong>هدف:</strong> پروژه واقعی یک کانتینر نیست — اپ + دیتابیس + شاید redis. یاد می‌گیری همه رو با یک فایل YAML تعریف و با <strong>یک دستور</strong> بالا بیاری: <code>docker compose up</code>. پرکاربردترین ابزار روزمره‌ی دولوپرها.</p>
+</blockquote>
+<hr />
+<h2>۸.۱ — مسئله: ده دستور برای هر بار بالا آوردن استک</h2>
+<p>بدون compose، استک واقعی پروژه یعنی:</p>
+<div class="codehilite"><pre><span></span><code>docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>--name<span class="w"> </span>db<span class="w"> </span>-e<span class="w"> </span><span class="nv">POSTGRES_PASSWORD</span><span class="o">=</span><span class="m">1234</span><span class="w"> </span>-p<span class="w"> </span><span class="m">5432</span>:5432<span class="w"> </span>postgres:18
+docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>--name<span class="w"> </span>redis<span class="w"> </span>-p<span class="w"> </span><span class="m">6379</span>:6379<span class="w"> </span>redis:7-alpine
+docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>--name<span class="w"> </span>api<span class="w"> </span>-p<span class="w"> </span><span class="m">3000</span>:3000<span class="w"> </span>--link<span class="w"> </span>db...<span class="w"> </span>myapi:1.0<span class="w">   </span><span class="c1"># و اتصالات و ترتیب‌ها...</span>
+</code></pre></div>
+
+<p>تکرار دستی این دستورات در هر بار راه‌اندازی، توسط هر عضو تیم یا در محیط‌های مختلف، بسیار خطاپذیر است و مدیریت فلگ‌ها و پورت‌ها را دشوار می‌کند.</p>
+<p><strong>جواب Compose:</strong> همه رو در یک فایل <code>compose.yaml</code> تعریف کن (نسخه‌پذیر در git!) و:</p>
+<div class="codehilite"><pre><span></span><code>docker<span class="w"> </span>compose<span class="w"> </span>up<span class="w"> </span>-d<span class="w">      </span><span class="c1"># همه با هم — همون npm install + start جهان داکر</span>
+</code></pre></div>
+
+<h2>۸.۲ — اولین compose.yaml</h2>
+<p>در پوشه پروژه (کنار Dockerfile)، فایل <code>compose.yaml</code>:</p>
+<div class="codehilite"><pre><span></span><code><span class="nt">services</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">api</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">build</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">.</span><span class="w">                  </span><span class="c1"># از Dockerfile همین پوشه بساز</span>
+<span class="w">    </span><span class="nt">ports</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"3000:3000"</span>
+<span class="w">    </span><span class="nt">environment</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">NODE_ENV=production</span>
+<span class="w">    </span><span class="nt">depends_on</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">db</span>
+
+<span class="w">  </span><span class="nt">db</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">postgres:18</span>
+<span class="w">    </span><span class="nt">environment</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">POSTGRES_PASSWORD</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mysecretpass</span>
+<span class="w">      </span><span class="nt">POSTGRES_DB</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">shop</span>
+<span class="w">    </span><span class="nt">ports</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"5432:5432"</span>
+</code></pre></div>
+
+<p>آناتومی:</p>
+<table>
+<thead>
+<tr>
+<th>کلید</th>
+<th>معنی</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>services:</code></td>
+<td>هر سرویس = یک کانتینر از یک ایمیج</td>
+</tr>
+<tr>
+<td><code>build: .</code></td>
+<td>از Dockerfile این پوشه build کن (به جای image آماده)</td>
+</tr>
+<tr>
+<td><code>image: postgres:18</code></td>
+<td>یا از ایمیج آماده</td>
+</tr>
+<tr>
+<td><code>ports: - "3000:3000"</code></td>
+<td>همون <code>-p</code> (میزبان:کانتینر)</td>
+</tr>
+<tr>
+<td><code>environment:</code></td>
+<td>همون <code>-e</code> ها — و چون YAML است، خواناتر</td>
+</tr>
+<tr>
+<td><code>depends_on:</code></td>
+<td>ترتیب: اول db بالا بیاد، بعد api</td>
+</tr>
+</tbody>
+</table>
+<h2>۸.۳ — سه دستور طلایی</h2>
+<div class="codehilite"><pre><span></span><code>$<span class="w"> </span>docker<span class="w"> </span>compose<span class="w"> </span>up<span class="w"> </span>-d<span class="w">        </span><span class="c1"># بالا بیاور (build در صورت نیاز) — کافیه!</span>
+$<span class="w"> </span>docker<span class="w"> </span>compose<span class="w"> </span>ps<span class="w">           </span><span class="c1"># وضعیت سرویس‌ها</span>
+$<span class="w"> </span>docker<span class="w"> </span>compose<span class="w"> </span>logs<span class="w"> </span>-f<span class="w"> </span>api<span class="w">  </span><span class="c1"># لاگ یک سرویس (یا همه: بدون اسم)</span>
+
+$<span class="w"> </span>docker<span class="w"> </span>compose<span class="w"> </span>down<span class="w">         </span><span class="c1"># توقف + حذف کانتینرها و شبکه (ایمیج‌ها و volumes می‌مانند)</span>
+</code></pre></div>
+
+<p>حتی <code>build</code> هم لازم نیست جدا بزنی — <code>up</code> خودش تشخیص می‌ده. و برای «کد عوض شد، دوباره بساز»:</p>
+<div class="codehilite"><pre><span></span><code>$<span class="w"> </span>docker<span class="w"> </span>compose<span class="w"> </span>up<span class="w"> </span>-d<span class="w"> </span>--build
+</code></pre></div>
+
+<blockquote>
+<p>💡 سرویس‌ها با اسمشون صدا زده می‌شن: <code>docker compose restart db</code>، <code>docker compose exec api sh</code> — همون دستورهای فصل ۵، فقط به جای اسم کانتینر، اسم سرویس.</p>
+</blockquote>
+<h2>۸.۴ — پروژه نمونه: استک واقعی (api + db)</h2>
+<p>همون اپ <code>myapi</code> فصل ۶ — ولی این‌بار با دیتابیس. اول کد رو به Postgres وصل کنیم (<code>server.js</code> ساده‌شده):</p>
+<div class="codehilite"><pre><span></span><code><span class="kd">const</span><span class="w"> </span><span class="nx">express</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">require</span><span class="p">(</span><span class="s2">"express"</span><span class="p">);</span>
+<span class="kd">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">Pool</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">require</span><span class="p">(</span><span class="s2">"pg"</span><span class="p">);</span>
+<span class="kd">const</span><span class="w"> </span><span class="nx">app</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">express</span><span class="p">();</span>
+
+<span class="kd">const</span><span class="w"> </span><span class="nx">pool</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">Pool</span><span class="p">({</span>
+<span class="w">  </span><span class="nx">connectionString</span><span class="o">:</span><span class="w"> </span><span class="nx">process</span><span class="p">.</span><span class="nx">env</span><span class="p">.</span><span class="nx">DATABASE_URL</span><span class="p">,</span><span class="w">   </span><span class="c1">// از environment کانتینر!</span>
+<span class="p">});</span>
+
+<span class="nx">app</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">"/"</span><span class="p">,</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="p">(</span><span class="nx">req</span><span class="p">,</span><span class="w"> </span><span class="nx">res</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">rows</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">pool</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span><span class="s2">"SELECT version()"</span><span class="p">);</span>
+<span class="w">  </span><span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">({</span><span class="w"> </span><span class="nx">db</span><span class="o">:</span><span class="w"> </span><span class="nx">rows</span><span class="p">[</span><span class="mf">0</span><span class="p">].</span><span class="nx">version</span><span class="p">.</span><span class="nx">slice</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span><span class="w"> </span><span class="mf">30</span><span class="p">)</span><span class="w"> </span><span class="p">});</span>
+<span class="p">});</span>
+
+<span class="nx">app</span><span class="p">.</span><span class="nx">listen</span><span class="p">(</span><span class="mf">3000</span><span class="p">);</span>
+</code></pre></div>
+
+<p>(توجه: پیش از بیلد، پکیج <code>pg</code> را با دستور <code>npm i pg</code> به پروژه اضافه کرده و در <code>package.json</code> قرار دهید.)</p>
+<p>و compose.yaml نهایی:</p>
+<div class="codehilite"><pre><span></span><code><span class="nt">services</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">api</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">build</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">.</span>
+<span class="w">    </span><span class="nt">ports</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"3000:3000"</span>
+<span class="w">    </span><span class="nt">environment</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">DATABASE_URL</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">postgres://postgres:mysecretpass@db:5432/shop</span><span class="w">   </span><span class="c1"># ← host = اسم سرویس!</span>
+<span class="w">    </span><span class="nt">depends_on</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">db</span>
+
+<span class="w">  </span><span class="nt">db</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">postgres:18</span>
+<span class="w">    </span><span class="nt">environment</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">POSTGRES_PASSWORD</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mysecretpass</span>
+<span class="w">      </span><span class="nt">POSTGRES_DB</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">shop</span>
+<span class="w">    </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pgdata:/var/lib/postgresql/data</span><span class="w">   </span><span class="c1"># داده ماندگار (فصل ۹!)</span>
+
+<span class="nt">volumes</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">pgdata</span><span class="p">:</span>
+</code></pre></div>
+
+<p>اجرا و تست:</p>
+<div class="codehilite"><pre><span></span><code>$<span class="w"> </span>docker<span class="w"> </span>compose<span class="w"> </span>up<span class="w"> </span>-d<span class="w"> </span>--build
+$<span class="w"> </span>curl<span class="w"> </span>http://localhost:3000
+<span class="o">{</span><span class="s2">"db"</span>:<span class="s2">"PostgreSQL 18.4 (Debian 12..."</span><span class="o">}</span>
+</code></pre></div>
+
+<p>API تو از داخل یک کانتینر به دیتابیس داخل کانتینر دیگه وصل شد. 🎉 (راز <code>@db:5432</code> — فصل ۱۰!)</p>
+<h2>۸.۵ — .env در compose (همون الگوی همیشگی ⭐)</h2>
+<p>پسورد داخل YAML که توی git می‌ره؟ نه! الگوی استاندارد:</p>
+<p><strong><code>.env</code></strong> (کنار compose.yaml، در .gitignore):</p>
+<div class="codehilite"><pre><span></span><code>POSTGRES_PASSWORD=mysecretpass
+</code></pre></div>
+
+<p><strong><code>compose.yaml</code>:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="w">  </span><span class="nt">db</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">postgres:18</span>
+<span class="w">    </span><span class="nt">environment</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">POSTGRES_PASSWORD</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${POSTGRES_PASSWORD}</span>
+</code></pre></div>
+
+<p>Compose خودش فایل <code>.env</code> کنار خودش رو می‌خونه و جایگزین می‌کنه — مقادیر در دو لایه تزریق می‌شوند: env فایل → YAML → env کانتینر → برنامه. (توصیه حرفه‌ای: همیشه یک فایل <code>.env.example</code> بدون مقادیر حساس برای مخزن گیت ایجاد کنید تا سایر توسعه‌دهندگان از ساختار متغیرها مطلع شوند.)</p>
+<h2>۸.۶ — دستورهای مکمل</h2>
+<div class="codehilite"><pre><span></span><code>$<span class="w"> </span>docker<span class="w"> </span>compose<span class="w"> </span>up<span class="w"> </span>-d<span class="w"> </span>--build<span class="w"> </span>db<span class="w">      </span><span class="c1"># فقط یک سرویس</span>
+$<span class="w"> </span>docker<span class="w"> </span>compose<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>db<span class="w"> </span>psql<span class="w"> </span>-U<span class="w"> </span>postgres<span class="w">   </span><span class="c1"># اجرای دستورات مدیریت دیتابیس در کانتینر</span>
+$<span class="w"> </span>docker<span class="w"> </span>compose<span class="w"> </span>restart<span class="w"> </span>api
+$<span class="w"> </span>docker<span class="w"> </span>compose<span class="w"> </span>down<span class="w"> </span>-v<span class="w">               </span><span class="c1"># ⚠️ با حذف volumes — داده‌ها می‌روند!</span>
+$<span class="w"> </span>docker<span class="w"> </span>compose<span class="w"> </span>config<span class="w">                </span><span class="c1"># خروجی نهایی YAML (با env جایگزین‌شده) — برای چک</span>
+</code></pre></div>
+
+<hr />
+<h2>✅ جمع‌بندی فصل</h2>
+<ul>
+<li>استک چند‌کانتینره = <code>compose.yaml</code> در git + <code>docker compose up -d</code></li>
+<li><code>build:</code> vs <code>image:</code>؛ ports/environment/depends_on = معادل فلگ‌های run</li>
+<li><code>down</code> کانتینرها را می‌برد؛ با <code>-v</code> داده هم می‌رود (خطرناک!)</li>
+<li>راز اتصال: اسم سرویس = hostname (<code>@db:5432</code>) — فصل ۱۰ کامل</li>
+<li>رازها با <code>.env</code> کنار compose — هرگز در YAML خالی</li>
+</ul>
+<h2>📝 تمرین فصل ۸</h2>
+<ol>
+<li>استک api + db این فصل را کامل بساز و بالا بیار؛ curl بزن و پاسخ PostgreSQL را ببین.</li>
+<li><code>docker compose ps</code> و <code>docker compose logs -f api</code> را تست کن.</li>
+<li>با <code>docker compose exec db psql -U postgres -d shop</code> برو داخل دیتابیس و <code>\l</code> بزن.</li>
+<li>compose را down کن و دوباره up — curl دوباره جواب می‌دهد؟ (بله! چون ایمیج و volume باقی‌اند.)</li>
+<li>پسورد را به <code>.env</code> منتقل کن و با <code>docker compose config</code> صحت جایگزینی را چک کن.</li>
+</ol>
+<details open="open">
+<summary>نکته تمرین ۲</summary>
+<p><code>logs -f api</code> فقط لاگ سرویس api را زنده نشان می‌دهد؛ بدون اسم سرویس، همه سرویس‌ها قاطی می‌آیند (با پیشوند اسم سرویس) — برای دیدن «همه‌چیز با هم» موقع startup عالی است.</p>
+</details>
+<p>➡️ <strong>فصل بعد:</strong> volume ها — داده‌ای که با down نمی‌میرد و توسعه‌ی زنده با bind mount.</p></section><section class="chapter" id="ch09"><h1>فصل ۹ — Volumes: داده ماندگار و توسعه‌ی زنده</h1>
+<blockquote>
+<p>🎯 <strong>هدف:</strong> دو مشکل واقعی رو حل می‌کنیم: (۱) داده‌ی دیتابیس با حذف کانتینر می‌میره — named volume حلشه؛ (۲) در توسعه، هر تغییر کد نیاز به build دوباره داره — bind mount حلشه.</p>
+</blockquote>
+<hr />
+<h2>۹.۱ — داده‌ها و ماهیت یکبارمصرف کانتینرها (Disposable / Ephemeral)</h2>
+<p>اصل بنیادین در داکر: کانتینرها ماهیتاً موقتی و یکبارمصرف هستند و با حذف کانتینر، داده‌های نوشته‌شده درون آن از بین می‌رود. این موضوع را در عمل بررسی کنیم:</p>
+<div class="codehilite"><pre><span></span><code>$<span class="w"> </span>docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>--name<span class="w"> </span>db1<span class="w"> </span>-e<span class="w"> </span><span class="nv">POSTGRES_PASSWORD</span><span class="o">=</span><span class="m">1</span><span class="w"> </span>postgres:18
+<span class="c1"># چند رکورد درش ثبت کن...</span>
+$<span class="w"> </span>docker<span class="w"> </span>rm<span class="w"> </span>-f<span class="w"> </span>db1<span class="w">           </span><span class="c1"># حذف</span>
+$<span class="w"> </span>docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>--name<span class="w"> </span>db2<span class="w"> </span>-e<span class="w"> </span><span class="nv">POSTGRES_PASSWORD</span><span class="o">=</span><span class="m">1</span><span class="w"> </span>postgres:18
+<span class="c1"># دیتابیس خالی! همه داده‌ها رفت.</span>
+</code></pre></div>
+
+<p>داده‌ها داخل لایه‌ی نوشتنیِ کانتینر بودن که با <code>rm</code> حذف می‌شه. جواب داکر: <strong>Volume</strong> — یک فضای مدیریت‌شده‌ی بیرونِ کانتینر که بهش وصل می‌شه:</p>
+<div class="mermaid">
+flowchart LR
+    C1["کانتینر db<br/>(بی‌رحم حذف می‌شود)"] -->|mount| V["Volume: pgdata<br/>(مستقل زندگی می‌کند) 📦"]
+    C2["کانتینر db جدید"] -->|همان mount| V
+</div>
+
+<h2>۹.۲ — Named Volume: داده‌ای که از death می‌ترسه نه</h2>
+<div class="codehilite"><pre><span></span><code>$<span class="w"> </span>docker<span class="w"> </span>volume<span class="w"> </span>ls<span class="w">                     </span><span class="c1"># لیست volumes</span>
+$<span class="w"> </span>docker<span class="w"> </span>volume<span class="w"> </span>create<span class="w"> </span>pgdata<span class="w">          </span><span class="c1"># ساخت دستی (معمولاً لازم نیست)</span>
+$<span class="w"> </span>docker<span class="w"> </span>volume<span class="w"> </span>rm<span class="w"> </span>pgdata<span class="w">              </span><span class="c1"># حذف (⚠️ داده برای همیشه می‌رود)</span>
+$<span class="w"> </span>docker<span class="w"> </span>volume<span class="w"> </span>inspect<span class="w"> </span>pgdata<span class="w">         </span><span class="c1"># کجا روی دیسک ذخیره شده؟</span>
+</code></pre></div>
+
+<p>و استفاده در <code>run</code>:</p>
+<div class="codehilite"><pre><span></span><code>$<span class="w"> </span>docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>--name<span class="w"> </span>db<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-e<span class="w"> </span><span class="nv">POSTGRES_PASSWORD</span><span class="o">=</span><span class="m">1</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-v<span class="w"> </span>pgdata:/var/lib/postgresql/data<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>postgres:18
+<span class="c1">#    ↑ اسم volume        ↑ مسیر داخل کانتینر</span>
+</code></pre></div>
+
+<p>فرم <code>-v</code>: <strong><code>-v اسمvolume:مسیرکانتینر</code></strong> — یعنی «این مسیر داخل کانتینر را به این volume وصل کن». حالا <code>rm</code> کانتینر، داده رو نمی‌کشه: کانتینر جدید رو به همون volume وصل کن، دیتا برگرده.</p>
+<p>توی compose (همون که فصل ۸ دیدی):</p>
+<div class="codehilite"><pre><span></span><code><span class="nt">services</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">db</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">postgres:18</span>
+<span class="w">    </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pgdata:/var/lib/postgresql/data</span>
+
+<span class="nt">volumes</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">pgdata</span><span class="p">:</span><span class="w">        </span><span class="c1"># ← تعریف سطح بالای فایل</span>
+</code></pre></div>
+
+<h2>۹.۳ — Bind Mount: اتصال پوشه‌ای از سیستم میزبان به داخل کانتینر</h2>
+<p>فرقش با named volume: به جای فضای مدیریتی داکر، <strong>یک پوشه واقعی از سیستم میزبان</strong> رو وصل می‌کنی. فرم تشخیصی: چون به جای یک اسم ساده، <em>مسیر فایل سیستم</em> درج می‌شود:</p>
+<div class="codehilite"><pre><span></span><code>$<span class="w"> </span>docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>--name<span class="w"> </span>web<span class="w"> </span>-p<span class="w"> </span><span class="m">8080</span>:80<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-v<span class="w"> </span><span class="s2">"</span><span class="k">$(</span><span class="nb">pwd</span><span class="k">)</span><span class="s2">/site"</span>:/usr/share/nginx/html<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>nginx
+</code></pre></div>
+
+<p>حالا فایل‌های پوشه‌ی <code>site</code> روی سیستم میزبان = محتوای سایت nginx. امتحانش:</p>
+<div class="codehilite"><pre><span></span><code>$<span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">"&lt;h1&gt;سلام از وب‌سرور داکر!&lt;/h1&gt;"</span><span class="w"> </span>&gt;<span class="w"> </span>./site/index.html
+$<span class="w"> </span>curl<span class="w"> </span>http://localhost:8080
+&lt;h1&gt;سلام<span class="w"> </span>از<span class="w"> </span>وب‌سرور<span class="w"> </span>داکر!&lt;/h1&gt;<span class="w">     </span><span class="c1"># بدون rebuild، بدون restart!</span>
+</code></pre></div>
+
+<h2>۹.۴ — در compose: bind mount برای توسعه ⭐</h2>
+<p>این الگو = قلب توسعه‌ی روزمره با داکر:</p>
+<div class="codehilite"><pre><span></span><code><span class="nt">services</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">api</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">build</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">.</span>
+<span class="w">    </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./src:/app/src</span><span class="w">          </span><span class="c1"># پوشه سورس کد → داخل کانتینر</span>
+<span class="w">    </span><span class="nt">environment</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">NODE_ENV</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">development</span>
+</code></pre></div>
+
+<p>با <code>node --watch server.js</code> (یا nodemon) به عنوان CMD در توسعه: فایل رو ذخیره می‌کنی → داخل کانتینر همون لحظه تغییر کرده → سرور reload می‌شه. <strong>تجربه‌ی hot-reload معمولی، ولی داخل کانتینر!</strong></p>
+<blockquote>
+<p>💡 تفاوت‌های سرانگشتی:</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>ویژگی</th>
+<th>Named Volume</th>
+<th>Bind Mount</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>فرم <code>-v</code></td>
+<td><code>اسم:مسیر</code></td>
+<td><code>/مسیر/سیستم:مسیر</code></td>
+</tr>
+<tr>
+<td>ماهیت</td>
+<td>فضای ذخیره‌سازی تحت مدیریت داکر</td>
+<td>پوشه واقعی روی سیستم‌عامل میزبان</td>
+</tr>
+<tr>
+<td>بهترین کاربرد</td>
+<td>داده‌های پایدار (دیتابیس)</td>
+<td>محیط توسعه: سینک زنده سورس کد</td>
+</tr>
+<tr>
+<td>وابستگی محیطی</td>
+<td>کاملاً مستقل و قابل حمل</td>
+<td>وابسته به ساختار مسیر سیستم میزبان</td>
+</tr>
+</tbody>
+</table>
+<h2>۹.۵ — بکاپ: چون «ماندگار» = «باید بکاپش رو داشته باشم»</h2>
+<div class="codehilite"><pre><span></span><code><span class="c1"># خروجی گرفتن از محتوای volume (کانتینر موقت برای mount):</span>
+$<span class="w"> </span>docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>-v<span class="w"> </span>pgdata:/data<span class="w"> </span>-v<span class="w"> </span><span class="s2">"</span><span class="nv">$PWD</span><span class="s2">"</span>:/backup<span class="w"> </span>alpine<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>tar<span class="w"> </span>czf<span class="w"> </span>/backup/pgdata-backup.tar.gz<span class="w"> </span>/data
+
+<span class="c1"># بازگرداندن:</span>
+$<span class="w"> </span>docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>-v<span class="w"> </span>pgdata:/data<span class="w"> </span>-v<span class="w"> </span><span class="s2">"</span><span class="nv">$PWD</span><span class="s2">"</span>:/backup<span class="w"> </span>alpine<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>tar<span class="w"> </span>xzf<span class="w"> </span>/backup/pgdata-backup.tar.gz<span class="w"> </span>-C<span class="w"> </span>/
+</code></pre></div>
+
+<p>(الگوی رایج: کانتینر alpine موقتی که به volume و پوشه بکاپ mount می‌شه — <code>--rm</code> یعنی بعدش خودش می‌ره.)</p>
+<h2>۹.۶ — قانون‌های ماندگاری</h2>
+<ol>
+<li><strong>دیتابیس بدون volume = بمب ساعتی.</strong> همیشه named volume</li>
+<li><strong>سورس در توسعه = bind mount؛ در production = داخل ایمیج</strong> (فصل ۷ — COPY)</li>
+<li><code>docker compose down</code> با volume ها کاری ندارد؛ <code>-v</code> = حذف (⚠️ سوال بپرس قبل از زدن!)</li>
+<li><code>docker system df</code> حجم volumes را نشان می‌دهد؛ <code>docker volume prune</code> = پاکسازی volume های بی‌صاحب</li>
+</ol>
+<hr />
+<h2>✅ جمع‌بندی فصل</h2>
+<ul>
+<li>کانتینر حذف = داده لایه‌اش حذف؛ <strong>volume = مستقل از کانتینر زندگی می‌کند</strong></li>
+<li>Named volume (<code>-v اسم:مسیر</code>) برای دیتای production؛ Bind mount (<code>-v /مسیر:مسیر</code>) برای توسعه</li>
+<li>bind mount = hot-reload واقعی داخل کانتینر با <code>--watch</code>/nodemon</li>
+<li>بکاپ با کانتینر موقت alpine؛ <code>down</code> امن، <code>down -v</code> خطرناک</li>
+</ul>
+<h2>📝 تمرین فصل ۹</h2>
+<ol>
+<li>Postgres با named volume بالا بیار (<code>pgdata</code>)، با psql یک جدول بساز و چند رکورد بزن؛ کانتینر را rm کن؛ دوباره با همان volume بالا بیاور — داده‌ها هست؟</li>
+<li>bind mount روی nginx: یک پوشه با سه فایل html بساز و mount کن — بین مرورگر و ادیتور زندگی کن (تغییر → refresh).</li>
+<li>بکاپ volume تمرین ۱ را با الگوی alpine بگیر و فایل tar را ببین.</li>
+<li>در compose پروژه فصل ۸، به api یک bind mount برای src اضافه کن و <code>NODE_ENV=development</code> بگذار.</li>
+<li><code>docker system df</code> بزن — volumes چقدر گرفته‌اند؟</li>
+</ol>
+<details open="open">
+<summary>راهنمای تمرین ۱</summary>
+<div class="codehilite"><pre><span></span><code>docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>--name<span class="w"> </span>pg<span class="w"> </span>-e<span class="w"> </span><span class="nv">POSTGRES_PASSWORD</span><span class="o">=</span><span class="m">1</span><span class="w"> </span>-v<span class="w"> </span>pgdata:/var/lib/postgresql/data<span class="w"> </span>postgres:18
+psql<span class="w"> </span><span class="s2">"postgresql://postgres:1@localhost:5432/postgres"</span><span class="w"> </span>-c<span class="w"> </span><span class="s2">"CREATE TABLE t1(x int); INSERT INTO t1 VALUES (1),(2);"</span>
+docker<span class="w"> </span>rm<span class="w"> </span>-f<span class="w"> </span>pg
+docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>--name<span class="w"> </span>pg<span class="w"> </span>-e<span class="w"> </span><span class="nv">POSTGRES_PASSWORD</span><span class="o">=</span><span class="m">1</span><span class="w"> </span>-v<span class="w"> </span>pgdata:/var/lib/postgresql/data<span class="w"> </span>postgres:18
+psql<span class="w"> </span><span class="s2">"postgresql://postgres:1@localhost:5432/postgres"</span><span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT * FROM t1;"</span><span class="w">   </span><span class="c1"># ← هنوز هست!</span>
+</code></pre></div>
+
+</details>
+<p>➡️ <strong>فصل بعد:</strong> شبکه‌ی کانتینرها — چرا در <code>DATABASE_URL</code> نوشتیم <code>@db:5432</code> و کار کرد؟!</p></section><section class="chapter" id="ch10"><h1>فصل ۱۰ — شبکه‌ی کانتینرها: چرا @db:5432 کار می‌کرد؟</h1>
+<blockquote>
+<p>🎯 <strong>هدف:</strong> معمای فصل ۸ رو حل می‌کنیم: چطور API داخل یک کانتینر با hostname ی به اسم <code>db</code> به کانتینر دیگه‌ای وصل شد؟ پایان فصل، شبکه‌ی داکر رو مثل <code>localhost</code> می‌فهمی.</p>
+</blockquote>
+<hr />
+<h2>۱۰.۱ — سه سناریوی اتصال (و ارور معروف اولی)</h2>
+<p><strong>سناریو ۱: برنامه‌ی تو (روی میزبان) می‌خواد به کانتینر وصل شه</strong> — مثل psql لوکالت به Postgres کانتینری:</p>
+<div class="codehilite"><pre><span></span><code>DATABASE_URL="postgresql://postgres:pass@localhost:5432/shop"
+                                    ↑ localhost + پورت مپ‌شده (-p 5432:5432)
+</code></pre></div>
+
+<p>کار می‌کنه چون <code>-p</code> پورت کانتینر رو به localhost میزبان وصل کرد (فصل ۳).</p>
+<p><strong>سناریو ۲: دو کانتینر می‌خوان به هم وصل‌شن</strong> — و اینجا <code>localhost</code> <strong>کار نمی‌کنه!</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># داخل کانتینر api:</span>
+<span class="nv">DATABASE_URL</span><span class="o">=</span><span class="s2">"...@localhost:5432/..."</span><span class="w">    </span><span class="c1"># ❌ ECONNREFUSED</span>
+</code></pre></div>
+
+<p>چرا؟ چون هر کانتینر شبکه‌ی خودش رو داره — <code>localhost</code> داخل کانتینر api یعنی «خود کانتینر api»، نه کانتینر db! این پرتکرارترین گیجی دولوپرهای تازه‌کار داکره.</p>
+<p><strong>سناریو ۳ (جواب): اسم سرویس به جای localhost</strong> — واینکه در compose نوشتیم <code>@db:5432</code> و کار کرد، چون...</p>
+<h2>۱۰.۲ — جادوی Compose: DNS داخلی + شبکه‌ی مشترک</h2>
+<p>وقتی <code>docker compose up</code> می‌زنی، داکر:
+1. یک <strong>شبکه‌ی خصوصی</strong> برای پروژه می‌سازه و همه سرویس‌ها رو توش می‌ذاره
+2. به هر کانتینر <strong>DNS داخلی</strong> می‌ده: اسم سرویس → آی‌پی کانتینر</p>
+<div class="mermaid">
+flowchart TB
+    subgraph NET["شبکه‌ی compose (مثلاً myproject_default)"]
+        A["api<br/>(172.20.0.3)"] -->|"DB_HOST=db → DNS<br/>db → 172.20.0.2"| B["db<br/>(172.20.0.2)"]
+        A --> R["redis<br/>(172.20.0.4)"]
+    end
+    H["سیستم میزبان (Host)"] -->|"localhost:3000 (ports)"| A
+</div>
+
+<p>یعنی <code>db</code> مثل یک اسم دامنه‌ی واقعی کار می‌کنه — <code>postgres://...@db:5432</code> یعنی «کانتینری که سرویس db اسم داره، پورت ۵۴۳۲ش». بدون آی‌پی، بدون مدیریت دستی.</p>
+<p>ببینش:</p>
+<div class="codehilite"><pre><span></span><code>$<span class="w"> </span>docker<span class="w"> </span>network<span class="w"> </span>ls<span class="w">                 </span><span class="c1"># شبکه‌ها (برای هر پروژه compose یکی)</span>
+$<span class="w"> </span>docker<span class="w"> </span>network<span class="w"> </span>inspect<span class="w"> </span>myproject_default<span class="w">   </span><span class="c1"># چه کسانی عضون + آی‌پی‌ها</span>
+</code></pre></div>
+
+<blockquote>
+<p>💡 نکته مهم درباره <code>depends_on</code>: این گزینه فقط <strong>ترتیب</strong> استارت کانتینرها را مشخص می‌کند، نه اینکه کانتینر مقصد لزوماً درخواست‌ها را آماده دریافت کرده باشد. به همین دلیل دیتابیس‌هایی مثل Postgres چند ثانیه زمان می‌برند تا آماده اتصال شوند و برنامه‌ها بهتر است قابلیت retry خودکار داشته باشند یا از مکانیزم <code>healthcheck</code> استفاده شود.</p>
+</blockquote>
+<h2>۱۰.۳ — جمع‌بندی hostname ها (راهنمای جامع آدرس‌دهی)</h2>
+<table>
+<thead>
+<tr>
+<th>از مبدأ</th>
+<th>به مقصد</th>
+<th>hostname / آدرس</th>
+<th>مثال کانکشن استرینگ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>برنامه روی سیستم میزبان</td>
+<td>کانتینر</td>
+<td><code>localhost</code></td>
+<td><code>@localhost:5432</code> (نیازمند port binding)</td>
+</tr>
+<tr>
+<td>کانتینر</td>
+<td>کانتینر دیگر در همان شبکه Compose</td>
+<td><strong>نام سرویس</strong></td>
+<td><code>@db:5432</code></td>
+</tr>
+<tr>
+<td>کانتینر</td>
+<td>اینترنت خارجی</td>
+<td>مستقیم</td>
+<td><code>curl https://api.github.com</code></td>
+</tr>
+<tr>
+<td>سرور لینوکس</td>
+<td>کانتینر</td>
+<td><code>localhost</code></td>
+<td>مانند سیستم میزبان (با پورت مپ‌شده)</td>
+</tr>
+</tbody>
+</table>
+<h2>۱۰.۴ — پرچم‌های پورت: تفاوت‌های ظریف</h2>
+<div class="codehilite"><pre><span></span><code><span class="w">    </span><span class="nt">ports</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"5432:5432"</span><span class="w">        </span><span class="c1"># برای همه اینترفیس‌ها — معمولی</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"127.0.0.1:5433:5432"</span><span class="w">   </span><span class="c1"># فقط از خود سیستم (امن‌تر برای دیتابیس!)</span>
+</code></pre></div>
+
+<p>و یک نکته امنیتی خوب: در production، دیتابیس اصلاً <code>-p</code> نمی‌خواد! چون فقط api بهش نیاز داره و در شبکه‌ی داخلی با اسم سرویس وصل می‌شه. پورت نکشیده = از بیرون غیرقابل دسترس = امن. (خیلی از سرورهای هک‌شده، دیتابیسی بودن که پورت ۵۴۳۲شون به اینترنت باز بود!)</p>
+<h2>۱۰.۵ — بدون compose هم می‌شه (شبکه‌ی دستی)</h2>
+<p>برای فهم عمیق‌تر — بدون compose، دو کانتینر روی یک شبکه:</p>
+<div class="codehilite"><pre><span></span><code>$<span class="w"> </span>docker<span class="w"> </span>network<span class="w"> </span>create<span class="w"> </span>mynet
+$<span class="w"> </span>docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>--name<span class="w"> </span>db<span class="w"> </span>--network<span class="w"> </span>mynet<span class="w"> </span>-e<span class="w"> </span><span class="nv">POSTGRES_PASSWORD</span><span class="o">=</span><span class="m">1</span><span class="w"> </span>postgres:18
+$<span class="w"> </span>docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>--name<span class="w"> </span>api<span class="w"> </span>--network<span class="w"> </span>mynet<span class="w"> </span>-p<span class="w"> </span><span class="m">3000</span>:3000<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-e<span class="w"> </span><span class="nv">DATABASE_URL</span><span class="o">=</span><span class="s2">"postgres://postgres:1@db:5432/postgres"</span><span class="w"> </span>myapi:1.0
+</code></pre></div>
+
+<p><code>--network</code> مشترک + اسم کانتینر به عنوان hostname — compose دقیقاً همین رو خودکار می‌کنه.</p>
+<hr />
+<h2>✅ جمع‌بندی فصل</h2>
+<ul>
+<li>از میزبان → کانتینر: <code>localhost:پورت-مپ‌شده</code> (-p)</li>
+<li>کانتینر → کانتینر: <code>localhost</code> غلطه! <strong>اسم سرویس/کانتینر = hostname</strong> (DNS داخلی داکر)</li>
+<li><code>depends_on</code> فقط ترتیب است، نه صبر برای آماده‌شدن — برنامه‌ها retry می‌زنند</li>
+<li>دیتابیس در production پورت نکش — فقط شبکه داخلی</li>
+</ul>
+<h2>📝 تمرین فصل ۱۰</h2>
+<ol>
+<li>استک api+db فصل ۸ را بالا بیاور؛ از داخل api: <code>getent hosts db</code> (یا <code>ping db</code> در ایمیج‌هایی که دارند) — آی‌پی کانتینر db را ببین.</li>
+<li><code>docker network ls</code> و <code>network inspect</code> روی شبکه پروژه — اعضا را ببین.</li>
+<li>از سیستم خودت به db وصل شو با <code>localhost:5432</code>؛ بعد داخل کانتینر api امتحان کن <code>localhost</code> — ECONNREFUSED را ببین! (دیگه می‌دونی چرا!)</li>
+<li>در compose، پورت db را به <code>127.0.0.1:5433:5432</code> تغییر بده و از سیستم وصل شو (<code>localhost:5433</code>).</li>
+<li>سوال مفهومی: در production سرور، چرا پورت db را کلاً نمی‌کشیم؟</li>
+</ol>
+<details open="open">
+<summary>جواب تمرین ۵</summary>
+<p>چون تنها مصرف‌کننده‌ی دیتابیس، api است که در همان شبکه‌ی compose با hostname <code>db</code> به آن می‌رسد. پورت نگشتن به میزبان یعنی دسترسی از اینترنت ممکن نیست → سطح حمله صفر. اگر روزی از بیرون نیاز شد، فقط به 127.0.0.1 مپ می‌کنیم و با SSH tunnel می‌رسیم بهش.</p>
+</details>
+<p>➡️ <strong>فصل بعد:</strong> همه را جمع می‌کنیم — استک کامل توسعه‌ی شرکتی: Next.js + Postgres + Prisma در داکر!</p></section><section class="chapter" id="ch11"><h1>فصل ۱۱ — 🚀 داکر در کار روزمره: استک کامل Next.js + Postgres + Prisma</h1>
+<blockquote>
+<p>🎯 <strong>هدف:</strong> سناریوی واقعی تیم‌های مهندسی نرم‌افزار: اجرای دیتابیس در کانتینر ایزوله، اجرای فریم‌ورک وب (مانند Next.js) روی سیستم میزبان، و ارتباط ORM (مانند Prisma) بین آن‌ها.</p>
+</blockquote>
+<hr />
+<h2>۱۱.۱ — الگوی استاندارد: دیتابیس داکری، اپ لوکال</h2>
+<p>در اغلب پروژه‌های مدرن تحت وب: <strong>برنامه اصلی روی سیستم توسعه‌دهنده اجرا می‌شود</strong> (<code>npm run dev</code> — برای استفاده از hot-reload سریع) اما <strong>دیتابیس‌ها و سرویس‌های جانبی در کانتینر داکر</strong> نگه‌داری می‌شوند (برای پرهیز از نصب سنگین سرویس‌ها روی سیستم‌عامل و تضمین یکسانی نسخه در تمام تیم). این یک الگوی استاندارد در صنعت نرم‌افزار است:</p>
+<div class="mermaid">
+flowchart LR
+    V["محیط توسعه / IDE"] -->|"npm run dev :3000"| N["برنامه Next.js روی میزبان"]
+    N -->|"DATABASE_URL<br/>@localhost:5432"| P["Postgres 18<br/>کانتینر داکر + Volume"]
+</div>
+
+<h2>۱۱.۲ — راه‌اندازی در ۵ دقیقه</h2>
+<p>در ریشه پروژه، فایل <code>compose.yaml</code> را بسازید:</p>
+<div class="codehilite"><pre><span></span><code><span class="nt">services</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">db</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">postgres:18</span>
+<span class="w">    </span><span class="nt">environment</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">POSTGRES_PASSWORD</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">devpass</span>
+<span class="w">      </span><span class="nt">POSTGRES_DB</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">myshop</span>
+<span class="w">    </span><span class="nt">ports</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"127.0.0.1:5432:5432"</span><span class="w">     </span><span class="c1"># فقط دسترسی امن از سیستم میزبان</span>
+<span class="w">    </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pgdata:/var/lib/postgresql/data</span>
+
+<span class="nt">volumes</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">pgdata</span><span class="p">:</span>
+</code></pre></div>
+
+<p>و فایل <code>.env</code> پروژه:</p>
+<div class="codehilite"><pre><span></span><code>DATABASE_URL="postgresql://postgres:devpass@localhost:5432/myshop"
+</code></pre></div>
+
+<p>بالا بیاورید و ابزار مهاجرت پایگاه داده (Prisma) را متصل کنید:</p>
+<div class="codehilite"><pre><span></span><code>$<span class="w"> </span>docker<span class="w"> </span>compose<span class="w"> </span>up<span class="w"> </span>-d
+$<span class="w"> </span>sleep<span class="w"> </span><span class="m">3</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>docker<span class="w"> </span>compose<span class="w"> </span>logs<span class="w"> </span>--tail<span class="w"> </span><span class="m">5</span><span class="w"> </span>db<span class="w">   </span><span class="c1"># صبر برای آماده‌شدن دیتابیس</span>
+
+$<span class="w"> </span>npx<span class="w"> </span>prisma<span class="w"> </span>migrate<span class="w"> </span>dev<span class="w">                       </span><span class="c1"># اجرای migrationها روی دیتابیس کانتینری!</span>
+$<span class="w"> </span>npm<span class="w"> </span>run<span class="w"> </span>dev<span class="w">                                  </span><span class="c1"># اجرای برنامه — متصل به دیتابیس داکر</span>
+</code></pre></div>
+
+<p>به این ترتیب یک محیط توسعه کامل، نسخه‌دار، قابل‌حذف و بازسازی سریع فراهم می‌شود؛ هر برنامه‌نویس دیگری در تیم با دریافت پروژه تنها با دستور <code>docker compose up -d</code> تمام سرویس‌های لازم را آماده خواهد داشت.</p>
+<blockquote>
+<p>🔑 همیشه این فایل <code>compose.yaml</code> و یک نمونه <code>.env.example</code> را در مخزن گیت پروژه کامیت کنید تا فرآیند onboarding اعضای جدید تیم فوری و بی‌دردسر باشد.</p>
+</blockquote>
+<h2>۱۱.۳ — گردش‌های روزمره (چیت‌شیت زنده)</h2>
+<table>
+<thead>
+<tr>
+<th>کار</th>
+<th>دستور</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>شروع روز کاری</td>
+<td><code>docker compose up -d</code></td>
+</tr>
+<tr>
+<td>ریست کامل دیتابیس توسعه</td>
+<td><code>docker compose down -v &amp;&amp; docker compose up -d</code> و بعد <code>npx prisma migrate dev</code></td>
+</tr>
+<tr>
+<td>دیدن لاگ دیتابیس</td>
+<td><code>docker compose logs -f db</code></td>
+</tr>
+<tr>
+<td>ورود به کنسول psql بدون نصب ابزار در سیستم</td>
+<td><code>docker compose exec db psql -U postgres -d myshop</code></td>
+</tr>
+<tr>
+<td>چک وضعیت سرویس‌ها</td>
+<td><code>docker compose ps</code></td>
+</tr>
+<tr>
+<td>پایان روز کاری</td>
+<td><code>docker compose stop</code> (سریع‌تر از down — کانتینرها متوقف می‌مانند)</td>
+</tr>
+</tbody>
+</table>
+<p>به دستور <code>exec db psql</code> دقت کنید: حتی اگر کلاینت PostgreSQL روی سیستم‌عامل میزبان نصب نباشد، کلاینت داخلی کانتینر مستقیماً اجرا می‌شود (مطابق آموزش فصل ۵).</p>
+<h2>۱۱.۴ — نکات کلیدی ارتباط با دیتابیس و داکر</h2>
+<p><strong>۱) خطای عدم اتصال در ابتدای کار (P1001 در Prisma):</strong> همان‌طور که در فصل ۱۰ دیدیم، بالا آمدن کانتینر دیتابیس چند ثانیه زمان می‌برد تا سوکت‌های شبکه آماده پذیرش ارتباط شوند. همیشه ابتدا با <code>docker compose logs db</code> آماده بودن سرور را بررسی کنید یا از مکانیزم <code>healthcheck</code> استفاده کنید.</p>
+<p><strong>۲) خطای اشغال بودن پورت («Port already allocated»):</strong> اگر قبلاً دیتابیسی روی سیستم میزبان پورت ۵۴۳۲ را اشغال کرده باشد، دو راه‌حل وجود دارد: متوقف کردن آن سرویس در سیستم، یا تغییر پورت بیرونی کانتینر مثلاً به <code>5433:5432</code> و تنظیم آدرس کانکشن استرینگ به <code>localhost:5433</code>. برای پیدا کردن پروسه اشغال‌کننده پورت می‌توان از <code>netstat -ano</code> استفاده کرد.</p>
+<p><strong>۳) تنظیم صحیح متغیرهای آدرس‌دهی:</strong> به تفاوت آدرس اتصال دقت کنید: زمانی که برنامه روی هاست اجرا می‌شود از <code>localhost</code> استفاده می‌کند، اما اگر برنامه داخل شبکه کانتینرها باشد از نام سرویس (مانند <code>db</code>) استفاده می‌کند.</p>
+<h2>۱۱.۵ — پروژه‌ی نهایی فصل: خودت اینو بساز ⭐</h2>
+<p>تمرین جامع — یک <code>docker-compose.yml</code> با سه سرویس برای یک اپ جدی:</p>
+<div class="codehilite"><pre><span></span><code><span class="nt">services</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">db</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">postgres:18</span>
+<span class="w">    </span><span class="nt">environment</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">POSTGRES_PASSWORD</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${DB_PASSWORD}</span>
+<span class="w">      </span><span class="nt">POSTGRES_DB</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${DB_NAME}</span>
+<span class="w">    </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pgdata:/var/lib/postgresql/data</span>
+<span class="w">    </span><span class="nt">ports</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"127.0.0.1:5432:5432"</span>
+<span class="w">    </span><span class="nt">healthcheck</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">test</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">"CMD-SHELL"</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">"pg_isready</span><span class="nv"> </span><span class="s">-U</span><span class="nv"> </span><span class="s">postgres"</span><span class="p p-Indicator">]</span>
+<span class="w">      </span><span class="nt">interval</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5s</span>
+<span class="w">      </span><span class="nt">timeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3s</span>
+<span class="w">      </span><span class="nt">retries</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span>
+
+<span class="w">  </span><span class="nt">redis</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">redis:7-alpine</span>
+
+<span class="w">  </span><span class="nt">adminer</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">adminer</span>
+<span class="w">    </span><span class="nt">ports</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"8081:8080"</span>
+
+<span class="nt">volumes</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">pgdata</span><span class="p">:</span>
+</code></pre></div>
+
+<p>چیزهای جدید این فایل:</p>
+<table>
+<thead>
+<tr>
+<th>مفهوم</th>
+<th>کار</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>healthcheck</code></td>
+<td>داکر خودش چک می‌کنه db «واقعاً» آماده است (<code>pg_isready</code>) — و <code>depends_on: condition: service_healthy</code> می‌تونه بهش تکیه کنه!</td>
+</tr>
+<tr>
+<td><code>adminer</code></td>
+<td>یک GUI وب برای دیتابیس — باز کن <code>localhost:8081</code></td>
+</tr>
+<tr>
+<td><code>${DB_PASSWORD}</code></td>
+<td>از فایل <code>.env</code> کنار compose می‌آید (فصل ۸)</td>
+</tr>
+</tbody>
+</table>
+<p>بزن <code>docker compose up -d</code> — سه سرویس: دیتابیس نسخه‌دار + ماندگار، ردیس، و یک داشبورد گرافیکی. به این می‌گن <strong>محیط توسعه‌ی خودتمون‌شده</strong> 😎</p>
+<h2>✅ جمع‌بندی فصل</h2>
+<ul>
+<li>الگوی رایج: دیتابیس/سرویس‌ها داکری، اپ لوکال با hot-reload</li>
+<li>استارت یک پروژه‌ی تیمی: clone → compose up → migrate → dev</li>
+<li><code>exec db psql</code> = ابزارهای داخل کانتینر؛ <code>down -v</code> = ریست کامل توسعه</li>
+<li>healthcheck = «واقعاً آماده»؛ پورت‌ها فقط برای میزبان (<code>127.0.0.1:</code>)</li>
+</ul>
+<h2>📝 تمرین فصل ۱۱</h2>
+<ol>
+<li>استک دو‌سرویسه (دیتابیس در داکر + برنامه لوکال) را کامل راه بینداز — دستورات migration را اجرا کن و صفحه اول برنامه را تست کن.</li>
+<li>ریست کامل توسعه: <code>down -v</code> → up → <code>prisma migrate dev</code> → داده‌ی اولیه (seed) را تزریق کن (<code>prisma db seed</code>).</li>
+<li>Adminer را بالا بیاور و با آن به دیتابیس وصل شو (<code>host: db</code> یا از سیستم: <code>localhost:5432</code>؟ هر دو را تست کن!).</li>
+<li>healthcheck را اضافه کن و <code>docker compose ps</code> بزن — ستون health را ببین (starting → healthy).</li>
+<li>فایل‌های <code>compose.yaml</code> و <code>.env.example</code> را در پروژه کامیت کن (پیام: <code>chore: add docker compose dev stack</code>) و به مخزن push کن.</li>
+</ol>
+<details open="open">
+<summary>نکته تمرین ۳</summary>
+<p>Adminer داخل کانتینر است؛ <code>host</code> اش باید <code>db</code> باشد (همان شبکه compose) — از سیستم هم <code>localhost:5432</code> کار می‌کند چون پورت مپ شده. دو مسیر، دو زاویه — همان فصل ۱۰!</p>
+</details>
+<p>➡️ <strong>فصل بعد:</strong> از محیط لوکال تا پروداکشن — push ایمیج و دپلوی روی سرور.</p></section><section class="chapter" id="ch12"><h1>فصل ۱۲ — push و دپلوی: از لپ‌تاپ به سرور</h1>
+<blockquote>
+<p>🎯 <strong>هدف:</strong> حلقه رو ببندیم: ایمیج ساخته‌شده رو به رجیستری push کن، روی یک VPS واقعی دپلوی کن، و نگهداری/امنیت پایه رو یاد بگیر. بعد از این فصل، «فول‌استک دپلوی‌شده» واقعاً معنا داره.</p>
+</blockquote>
+<hr />
+<h2>۱۲.۱ — چرخه توزیع: build → push → pull → run</h2>
+<p>همون مدل npm: پکیجت رو publish می‌کنی، هر کسی (حتی سرور) install می‌کنه:</p>
+<div class="mermaid">
+flowchart LR
+    L["لپ‌تاپ تو<br/>docker build"] -->|"docker push"| H["Registry<br/>Docker Hub / GHCR"]
+    H -->|"docker pull"| S["سرور VPS<br/>docker run"]
+</div>
+
+<h2>۱۲.۲ — push به Docker Hub</h2>
+<div class="codehilite"><pre><span></span><code>$<span class="w"> </span>docker<span class="w"> </span>login<span class="w">                      </span><span class="c1"># با حساب کاربری رجیستری</span>
+
+$<span class="w"> </span>docker<span class="w"> </span>build<span class="w"> </span>-t<span class="w"> </span>USERNAME/myapi:1.0<span class="w"> </span>.<span class="w">          </span><span class="c1"># ⚠️ اسم باید owner/name باشد!</span>
+$<span class="w"> </span>docker<span class="w"> </span>tag<span class="w"> </span>myapi:1.0<span class="w"> </span>USERNAME/myapi:1.0<span class="w">       </span><span class="c1"># یا تگ مجدد ایمیج موجود</span>
+
+$<span class="w"> </span>docker<span class="w"> </span>push<span class="w"> </span>USERNAME/myapi:1.0
+</code></pre></div>
+
+<p>(مشابه انتشار پکیج‌ها — ساختار <code>owner/name</code> الزامی است.) و روی هر سرور یا سیستمی در دنیا:</p>
+<div class="codehilite"><pre><span></span><code>$<span class="w"> </span>docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>-p<span class="w"> </span><span class="m">3000</span>:3000<span class="w"> </span>USERNAME/myapi:1.0
+</code></pre></div>
+
+<blockquote>
+<p>💡 <strong>تگ‌گذاری معنادار:</strong> <code>USERNAME/myapi:1.0</code> و <code>USERNAME/myapi:latest</code> — ارسال هر دو تگ توصیه می‌شود (latest برای دسترسی سریع، نسخه برای دقت و ثبات). دستور <code>docker tag</code> یک برچسب جدید روی همان ایمیج می‌زند و نیازی به بیلد مجدد نیست.</p>
+</blockquote>
+<h2>۱۲.۳ — گزینه‌ی مدرن: GHCR (رجیستری گیت‌هاب)</h2>
+<p>استفاده از GitHub Packages / GHCR به ویژه برای مخازن گیت‌هاب بسیار یکپارچه است:</p>
+<div class="codehilite"><pre><span></span><code>$<span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="nv">$GITHUB_TOKEN</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>docker<span class="w"> </span>login<span class="w"> </span>ghcr.io<span class="w"> </span>-u<span class="w"> </span>USERNAME<span class="w"> </span>--password-stdin
+$<span class="w"> </span>docker<span class="w"> </span>tag<span class="w"> </span>myapi:1.0<span class="w"> </span>ghcr.io/USERNAME/myapi:1.0
+$<span class="w"> </span>docker<span class="w"> </span>push<span class="w"> </span>ghcr.io/USERNAME/myapi:1.0
+</code></pre></div>
+
+<p>و خودکارسازی: در GitHub Actions، می‌توان یک پایپ‌لاین CI/CD نوشت که با هر Git Tag یا انتشار نسخه جدید، ایمیج را بیلد کرده و به GHCR ارسال کند.</p>
+<h2>۱۲.۴ — دپلوی روی VPS (سرور لینوکسی)</h2>
+<p>اتصال به سرور لینوکسی از طریق SSH:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># روی سرور — یک بار:</span>
+$<span class="w"> </span>ssh<span class="w"> </span>root@203.0.113.10
+<span class="c1"># نصب داکر (اسکریپت رسمی):</span>
+curl<span class="w"> </span>-fsSL<span class="w"> </span>https://get.docker.com<span class="w"> </span><span class="p">|</span><span class="w"> </span>sh
+docker<span class="w"> </span>--version
+
+<span class="c1"># دپلوی:</span>
+$<span class="w"> </span>docker<span class="w"> </span>pull<span class="w"> </span>ghcr.io/USERNAME/myapi:1.0
+$<span class="w"> </span>docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>--name<span class="w"> </span>api<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-p<span class="w"> </span><span class="m">80</span>:3000<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--restart<span class="w"> </span>unless-stopped<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-e<span class="w"> </span><span class="nv">DATABASE_URL</span><span class="o">=</span><span class="s2">"..."</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>ghcr.io/USERNAME/myapi:1.0
+
+$<span class="w"> </span>curl<span class="w"> </span>http://203.0.113.10<span class="w">        </span><span class="c1"># 🎉 اپلیکیشن روی سرور آماده پاسخگویی است!</span>
+</code></pre></div>
+
+<ul>
+<li><code>--restart unless-stopped</code> = بعد از کرش یا ری‌استارت سرور، کانتینر خودبه‌خود روشن می‌شود (فصل ۳)</li>
+<li><code>-p 80:3000</code> = پورت استاندارد ۸۰ وب به پورت کانتینر متصل می‌شود (یا در پشت Nginx قرار می‌گیرد)</li>
+</ul>
+<h3>به‌روزرسانی نسخه (چرخه‌ی همیشگی):</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># بعد از انتشار نسخه جدید:</span>
+$<span class="w"> </span>docker<span class="w"> </span>pull<span class="w"> </span>ghcr.io/USERNAME/myapi:1.1
+$<span class="w"> </span>docker<span class="w"> </span>stop<span class="w"> </span>api<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>docker<span class="w"> </span>rm<span class="w"> </span>api
+$<span class="w"> </span>docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>--name<span class="w"> </span>api<span class="w"> </span>-p<span class="w"> </span><span class="m">80</span>:3000<span class="w"> </span>--restart<span class="w"> </span>unless-stopped<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-e<span class="w"> </span><span class="nv">DATABASE_URL</span><span class="o">=</span><span class="s2">"..."</span><span class="w"> </span>ghcr.io/USERNAME/myapi:1.1
+</code></pre></div>
+
+<p>(این چرخه دستی برای شروع ساده‌ترین حالت است؛ در مراحل پیشرفته‌تر با ابزارهایی مثل Watchtower یا وب‌هوک‌ها خودکارسازی می‌شود.)</p>
+<h3>استک با compose روی سرور:</h3>
+<p>اگر فایل compose آماده کرده‌اید، روی سرور به سادگی قابل اجراست:</p>
+<div class="codehilite"><pre><span></span><code>$<span class="w"> </span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/USERNAME/myproj.git<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">cd</span><span class="w"> </span>myproj
+$<span class="w"> </span>nano<span class="w"> </span>.env<span class="w">                        </span><span class="c1"># تنظیم متغیرهای محیطی محیط پروداکشن</span>
+$<span class="w"> </span>docker<span class="w"> </span>compose<span class="w"> </span>up<span class="w"> </span>-d<span class="w"> </span>--build
+</code></pre></div>
+
+<p>داده‌های دیتابیس در production هم با Volume داکر ذخیره می‌شوند — و فرآیند <strong>بکاپ‌گیری</strong> منظم (آموزش‌داده‌شده در فصل ۹) الزامی است.</p>
+<h2>۱۲.۵ — بهداشت سرور: پاکسازی</h2>
+<p>داکر روی سرور با نسخه‌های قدیمی ایمیج‌ها و کش بیلد ممکن است فضای دیسک را پر کند:</p>
+<div class="codehilite"><pre><span></span><code>$<span class="w"> </span>docker<span class="w"> </span>system<span class="w"> </span>df<span class="w">                 </span><span class="c1"># گزارش فضای مصرفی داکر</span>
+$<span class="w"> </span>docker<span class="w"> </span>system<span class="w"> </span>prune<span class="w">              </span><span class="c1"># حذف کانتینرهای متوقف + شبکه‌های بلااستفاده + کش بیلد</span>
+$<span class="w"> </span>docker<span class="w"> </span>system<span class="w"> </span>prune<span class="w"> </span>-a<span class="w">           </span><span class="c1"># ⚠️ همراه با ایمیج‌های استفاده‌نشده (با احتیاط)</span>
+</code></pre></div>
+
+<p>یک کار دوره‌ای یا cron job برای پاکسازی ایمیج‌های بی‌استفاده به سلامت سرور کمک شایانی می‌کند.</p>
+<h2>۱۲.۶ — امنیت پایه (چک‌لیست):</h2>
+<ul>
+<li>[ ] <strong>کلیدها و اطلاعات حساس در env، نه داخل ایمیج:</strong> هرگز <code>ENV SECRET=...</code> در Dockerfile قرار نگیرد؛ همیشه از فایل‌های <code>.env</code>، ابزارهای مدیریت secret یا فلگ <code>-e</code> استفاده شود</li>
+<li>[ ] فایل‌های حساس <code>.env</code> هرگز به ایمیج یا مخزن گیت اضافه نشوند (تنظیم دقیق <code>.dockerignore</code> و <code>.gitignore</code>)</li>
+<li>[ ] استفاده از تگ‌های نسخه‌دار دقیق به جای <code>latest</code> در سرور پروداکشن</li>
+<li>[ ] دیتابیس بدون پورت پابلیک باز اجرا شود (فقط در شبکه داخلی داکر، مطابق فصل ۱۰)</li>
+<li>[ ] کانتینرها در صورت امکان با کاربر غیر روت اجرا شوند (<code>USER node</code> در Dockerfile برای پروژه‌های نود)</li>
+<li>[ ] ایمیج پایه را مرتب pull/بازسازی کن (آپدیت‌های امنیتی پایه)</li>
+<li>[ ] پورت‌های management (مثل ۲۳۷۵ داکر) بسته باشند</li>
+</ul>
+<hr />
+<h2>✅ جمع‌بندی فصل</h2>
+<ul>
+<li>چرخه: <code>build -t owner/name:tag</code> → <code>push</code> → سرور <code>pull</code> → <code>run -d -p --restart</code></li>
+<li>Docker Hub یا GHCR؛ تگ‌گذاری معنادار (نسخه + latest)</li>
+<li>دپلوی ساده VPS: داکر نصب → run با restart؛ استک‌ها با compose up</li>
+<li><code>system prune</code> برای بهداشت فضا؛ امنیت: رازها با env، تگ دقیق، دیتابیس بی‌پورت</li>
+</ul>
+<h2>📝 تمرین فصل ۱۲</h2>
+<ol>
+<li>ایمیج myapi را با تگ‌های <code>1.0</code> و <code>latest</code> بساز و به Hub (یا GHCR) push کن.</li>
+<li>ایمیج pushed را حذف از لوکال (<code>docker rmi</code>) و دوباره <code>docker run</code> — از رجیستری pull شد!</li>
+<li>(اگر VPS داری ⭐) کل چرخه: pull و run و curl به IP سرور. (بدون VPS: شبیه‌سازی — pull روی سیستم خودت.)</li>
+<li><code>docker system df</code> و بعد <code>prune</code> — قبل و بعد را مقایسه کن.</li>
+<li>چک‌لیست امنیتی را روی یک Dockerfile نمونه یا پروژه واقعی بررسی کن — چند مورد از موارد چک‌لیست رعایت شده است؟</li>
+</ol>
+<details open="open">
+<summary>نکته تمرین ۱</summary>
+<div class="codehilite"><pre><span></span><code>docker<span class="w"> </span>build<span class="w"> </span>-t<span class="w"> </span>USERNAME/myapi:1.0<span class="w"> </span>-t<span class="w"> </span>USERNAME/myapi:latest<span class="w"> </span>.
+docker<span class="w"> </span>push<span class="w"> </span>USERNAME/myapi:1.0
+docker<span class="w"> </span>push<span class="w"> </span>USERNAME/myapi:latest
+</code></pre></div>
+
+<p>دو تگ = دو push (هر کدام یک اشاره‌گر به همان لایه‌ها — دومی تقریباً فوری است چون لایه‌ها آپلود شده‌اند).</p>
+</details>
+<p>➡️ <strong>فصل آخر:</strong> چیت‌شیت کامل و گلاساری — مرجع سریع دستورات داکر.</p></section><section class="chapter" id="ch13"><h1>فصل ۱۳ — چیت‌شیت، گلاساری و ارورهای کلاسیک</h1>
+<blockquote>
+<p>🎯 <strong>هدف:</strong> مرجع مرور سریع — چاپش کن کنار مانیتورت.</p>
+</blockquote>
+<hr />
+<h2>۱۳.۱ — چیت‌شیت دستورات</h2>
+<div class="codehilite"><pre><span></span><code><span class="c1"># ═══ ایمیج (فصل ۴) ═══</span>
+docker<span class="w"> </span>pull<span class="w"> </span>postgres:18<span class="w">              </span><span class="c1"># دانلود (تگ دقیق!)</span>
+docker<span class="w"> </span>images<span class="w"> </span>/<span class="w"> </span>docker<span class="w"> </span>rmi<span class="w"> </span>&lt;img&gt;<span class="w">     </span><span class="c1"># لیست / حذف</span>
+docker<span class="w"> </span>build<span class="w"> </span>-t<span class="w"> </span>name:1.0<span class="w"> </span>.<span class="w">           </span><span class="c1"># ساخت از Dockerfile</span>
+docker<span class="w"> </span><span class="nb">history</span><span class="w"> </span>&lt;img&gt;<span class="w">                 </span><span class="c1"># لایه‌ها</span>
+docker<span class="w"> </span>system<span class="w"> </span>df<span class="w"> </span>/<span class="w"> </span>prune<span class="w">             </span><span class="c1"># فضا / پاکسازی</span>
+
+<span class="c1"># ═══ کانتینر (فصل ۳) ═══</span>
+docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>-p<span class="w"> </span><span class="m">8080</span>:80<span class="w"> </span>--name<span class="w"> </span>web<span class="w"> </span>nginx
+<span class="c1">#              ↑ میزبان:کانتینر    ↑ -e VAR=val متغیر</span>
+docker<span class="w"> </span>ps<span class="w"> </span>/<span class="w"> </span>docker<span class="w"> </span>ps<span class="w"> </span>-a<span class="w">             </span><span class="c1"># در حال اجرا / همه</span>
+docker<span class="w"> </span>logs<span class="w"> </span>-f<span class="w"> </span>--tail<span class="w"> </span><span class="m">50</span><span class="w"> </span>web<span class="w">         </span><span class="c1"># لاگ زنده</span>
+docker<span class="w"> </span>stop/start/restart/rm<span class="w"> </span>web<span class="w">     </span><span class="c1"># چرخه عمر</span>
+docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>web<span class="w"> </span>bash<span class="w">             </span><span class="c1"># ورود (alpine: sh)</span>
+docker<span class="w"> </span>cp<span class="w"> </span>web:/path<span class="w"> </span>./<span class="w">               </span><span class="c1"># کپی دوطرفه</span>
+docker<span class="w"> </span>container<span class="w"> </span>prune<span class="w">               </span><span class="c1"># جاروی متوقف‌ها</span>
+
+<span class="c1"># ═══ Compose (فصل ۸) ═══</span>
+docker<span class="w"> </span>compose<span class="w"> </span>up<span class="w"> </span>-d<span class="w"> </span><span class="o">[</span>--build<span class="o">]</span><span class="w">       </span><span class="c1"># بالا بیاور</span>
+docker<span class="w"> </span>compose<span class="w"> </span>ps<span class="w"> </span>/<span class="w"> </span>logs<span class="w"> </span>-f<span class="w"> </span>api<span class="w">      </span><span class="c1"># وضعیت / لاگ</span>
+docker<span class="w"> </span>compose<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>api<span class="w"> </span>sh<span class="w">           </span><span class="c1"># ورود به سرویس</span>
+docker<span class="w"> </span>compose<span class="w"> </span>down<span class="w"> </span>/<span class="w"> </span>down<span class="w"> </span>-v<span class="w">        </span><span class="c1"># توقف / + حذف داده (⚠️)</span>
+docker<span class="w"> </span>compose<span class="w"> </span>config<span class="w">                </span><span class="c1"># YAML نهایی با env</span>
+
+<span class="c1"># ═══ داده (فصل ۹) ═══</span>
+docker<span class="w"> </span>volume<span class="w"> </span>ls<span class="w"> </span>/<span class="w"> </span>rm<span class="w"> </span>/<span class="w"> </span>inspect
+-v<span class="w"> </span>pgdata:/var/lib/postgresql/data<span class="w">   </span><span class="c1"># named (production)</span>
+-v<span class="w"> </span>./src:/app/src<span class="w">                    </span><span class="c1"># bind (توسعه)</span>
+
+<span class="c1"># ═══ شبکه (فصل ۱۰) ═══</span>
+docker<span class="w"> </span>network<span class="w"> </span>ls<span class="w"> </span>/<span class="w"> </span>inspect<span class="w"> </span>&lt;net&gt;
+اسم<span class="w"> </span><span class="nv">سرویس</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>hostname<span class="w">                 </span><span class="c1"># کانتینر→کانتینر</span>
+<span class="nv">localhost</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>فقط<span class="w"> </span>برای<span class="w"> </span>میزبان<span class="w">          </span><span class="c1"># کانتینر→localhost غلط!</span>
+
+<span class="c1"># ═══ توزیع (فصل ۱۲) ═══</span>
+docker<span class="w"> </span>login
+docker<span class="w"> </span>tag<span class="w"> </span>myapi:1.0<span class="w"> </span>user/myapi:1.0
+docker<span class="w"> </span>push<span class="w"> </span>user/myapi:1.0
+docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>--restart<span class="w"> </span>unless-stopped<span class="w"> </span>-p<span class="w"> </span><span class="m">80</span>:3000<span class="w"> </span>user/myapi:1.0
+</code></pre></div>
+
+<h2>۱۳.۲ — هفت دستور Dockerfile</h2>
+<table>
+<thead>
+<tr>
+<th>دستور</th>
+<th>کار</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>FROM node:22-alpine</code></td>
+<td>ایمیج پایه (همیشه اول؛ alpine برای production)</td>
+</tr>
+<tr>
+<td><code>WORKDIR /app</code></td>
+<td>پوشه کاری داخل کانتینر</td>
+</tr>
+<tr>
+<td><code>COPY . .</code> / <code>COPY --from=x</code></td>
+<td>آوردن فایل‌ها / از مرحله دیگر</td>
+</tr>
+<tr>
+<td><code>RUN npm ci</code></td>
+<td>اجرا حین build (در ایمیج ثبت می‌شود)</td>
+</tr>
+<tr>
+<td><code>ENV NODE_ENV=production</code></td>
+<td>متغیر محیطی</td>
+</tr>
+<tr>
+<td><code>EXPOSE 3000</code></td>
+<td>مستندسازی (باز کردن واقعی با -p)</td>
+</tr>
+<tr>
+<td><code>CMD ["node","server.js"]</code></td>
+<td>پروژه اصلی حین run</td>
+</tr>
+</tbody>
+</table>
+<p><strong>قانون‌های Dockerfile:</strong> dependency ها بالای سورس (کش!)؛ multi-stage برای production؛ .dockerignore همیشه؛ پاک‌سازی در همان RUN (<code>&amp;&amp;</code>).</p>
+<h2>۱۳.۳ — گلاساری فارسی–انگلیسی</h2>
+<table>
+<thead>
+<tr>
+<th>انگلیسی</th>
+<th>فارسی</th>
+<th>یک جمله</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Container</td>
+<td>کانتینر</td>
+<td>نمونه‌ی در حال اجرای ایمیج — ایزوله و سبک</td>
+</tr>
+<tr>
+<td>Image</td>
+<td>ایمیج</td>
+<td>قالب فقط‌خواندنی حاوی اپ و محیطش</td>
+</tr>
+<tr>
+<td>Registry</td>
+<td>رجیستری</td>
+<td>انبار ایمیج‌ها (Docker Hub، GHCR)</td>
+</tr>
+<tr>
+<td>Layer</td>
+<td>لایه</td>
+<td>پله‌ی فقط‌خواندنی ایمیج؛ پایه‌ی کش</td>
+</tr>
+<tr>
+<td>Tag</td>
+<td>تگ</td>
+<td>نسخه‌ی ایمیج (<code>postgres:18</code>)</td>
+</tr>
+<tr>
+<td>Dockerfile</td>
+<td>—</td>
+<td>دستور پخت ایمیج</td>
+</tr>
+<tr>
+<td>Compose</td>
+<td>—</td>
+<td>تعریف چند سرویس در یک YAML</td>
+</tr>
+<tr>
+<td>Volume</td>
+<td>ولوم / حجم</td>
+<td>فضای ماندگار مستقل از کانتینر</td>
+</tr>
+<tr>
+<td>Bind Mount</td>
+<td>اتصال پوشه</td>
+<td>اتصال پوشه‌ای از سیستم میزبان به داخل کانتینر (برای توسعه)</td>
+</tr>
+<tr>
+<td>Port Mapping</td>
+<td>نگاشت پورت</td>
+<td><code>-p میزبان:کانتینر</code></td>
+</tr>
+<tr>
+<td>Build Context</td>
+<td>زمینه build</td>
+<td>پوشه‌ای که به build داده می‌شود (.)</td>
+</tr>
+<tr>
+<td>Multi-stage</td>
+<td>چند‌مرحله‌ای</td>
+<td>build جدا از runtime برای ایمیج سبک</td>
+</tr>
+<tr>
+<td>Daemon</td>
+<td>دیمن</td>
+<td>سرویس پس‌زمینه‌ی داکر (Engine)</td>
+</tr>
+<tr>
+<td>Healthcheck</td>
+<td>بررسی سلامت</td>
+<td>«واقعاً» آماده است؟ (<code>pg_isready</code>)</td>
+</tr>
+<tr>
+<td>WSL2</td>
+<td>—</td>
+<td>لینوکس زیر Docker Desktop در ویندوز</td>
+</tr>
+</tbody>
+</table>
+<h2>۱۳.۴ — دوازده ارور کلاسیک و ترجمه</h2>
+<table>
+<thead>
+<tr>
+<th>ارور</th>
+<th>یعنی</th>
+<th>علاج</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>port is already allocated</code></td>
+<td>پورت میزبان اشغال</td>
+<td>استفاده از پورت دیگر یا بستن پروسه اشغال‌کننده با <code>netstat</code> / <code>taskkill</code></td>
+</tr>
+<tr>
+<td><code>Cannot connect to Docker daemon</code></td>
+<td>Engine خاموش</td>
+<td>Docker Desktop یا سرویس Docker را اجرا کنید</td>
+</tr>
+<tr>
+<td><code>manifest unknown / pull access denied</code></td>
+<td>ایمیج/تگ غلط</td>
+<td>نام و تگ را بررسی کنید؛ در صورت خصوصی بودن لاگین کنید (<code>docker login</code>)</td>
+</tr>
+<tr>
+<td><code>ECONNREFUSED</code> به دیتابیس از اپ کانتینری</td>
+<td>استفاده از localhost داخل کانتینر</td>
+<td>نام سرویس به عنوان هاست قرار گیرد: <code>@db:5432</code> (فصل ۱۰)</td>
+</tr>
+<tr>
+<td><code>P1001</code> در Prisma</td>
+<td>db هنوز آماده نشده</td>
+<td><code>docker compose logs db</code> و صبر برای راه‌اندازی یا استفاده از healthcheck</td>
+</tr>
+<tr>
+<td><code>exec: bash: not found</code></td>
+<td>ایمیج مبتنی بر alpine است</td>
+<td>استفاده از <code>sh</code> به جای <code>bash</code></td>
+</tr>
+<tr>
+<td>کانتینر بلافاصله Exited</td>
+<td>پروسه اصلی متوقف شد</td>
+<td>بررسی خروجی با <code>docker logs</code> (معمولاً ارور سینتکس یا متغیرهای محیطی)</td>
+</tr>
+<tr>
+<td>داده‌ی دیتابیس پاک شد</td>
+<td>volume تعریف نشده بود</td>
+<td>تعریف و مانت Volume پایدار با <code>-v pgdata:...</code> (فصل ۹)</td>
+</tr>
+<tr>
+<td>حجم ایمیج خیلی بزرگ شد</td>
+<td>ابزارهای بیلد و فایل‌های اضافه داخل ایمیج مانده</td>
+<td>Multi-stage build + حذف فایل‌های غیرضروری در <code>.dockerignore</code> (فصل ۷)</td>
+</tr>
+<tr>
+<td>تغییر کد در پروژه اثر نکرد</td>
+<td>ایمیج مجدداً بیلد نشده</td>
+<td>اجرای <code>docker compose up -d --build</code></td>
+</tr>
+<tr>
+<td><code>no space left on device</code></td>
+<td>دیسک پر شده</td>
+<td>بررسی با <code>docker system df</code> و پاکسازی با <code>docker system prune</code></td>
+</tr>
+<tr>
+<td>خطای اجرای پکیج‌های نیتیو (node_modules)</td>
+<td>کپی مستقیم پوشه لوکال هاست به لینوکس</td>
+<td>نادیده گرفتن <code>node_modules</code> در <code>.dockerignore</code> و نصب داخل کانتینر (فصل ۶)</td>
+</tr>
+</tbody>
+</table>
+<h2>۱۳.۵ — نقشه راه پس از این دوره</h2>
+<div class="mermaid">
+flowchart LR
+    A["پایه‌های داکر ✅"] --> B["استانداردسازی پروژه‌ها با Dockerfile و Compose"]
+    B --> C["CI/CD: بیلد و تست خودکار با GitHub Actions"]
+    C --> D["دپلوی: سرور لینوکسی با Compose و بکاپ‌گیری"]
+    D --> E["معماری پیشرفته: Nginx Reverse Proxy + SSL"]
+    E --> F["مقیاس‌پذیری: Kubernetes و ارکستراسیون کانتینرها"]
+    style A fill:#059669,color:#fff
+    style F fill:#0ea5e9,color:#fff
+</div>
+
+<p><strong>سه توصیه‌ی پایانی برای تسلط کامل:</strong></p>
+<ol>
+<li><strong>تمرین روی پروژه‌های واقعی:</strong> در اولین فرصت، استک توسعه (مانند فصل ۱۱) را به پروژه‌های فعلی خود اضافه کنید و با ایجاد <code>compose.yaml</code> و <code>.env.example</code>، مدیریت دیتابیس و محیط را کانتینری کنید.</li>
+<li><strong>استفاده مستمر از راهنمای خط فرمان:</strong> تمام دستورات و سوییچ‌ها با دستورات <code>docker --help</code> و <code>docker compose --help</code> همواره در دسترس هستند و درک ساختار دستورات مهم‌تر از حفظ کردن آن‌هاست.</li>
+<li><strong>مستندات رسمی داکر:</strong> سایت <a href="https://docs.docker.com">docs.docker.com</a> بهترین مرجع برای جزئیات فنی دقیق و قابلیت‌های پیشرفته‌تر است که با تسلط بر مفاهیم پایه‌ای این دوره، مطالعه آن بسیار آسان خواهد بود.</li>
+</ol>
+<p>با تسلط بر این مفاهیم، توانایی بسته‌بندی، ایزوله‌سازی، تست و دپلوی پروژه‌های نرم‌افزاری به صورت استاندارد در داکر به دست آمده است. 🐳🚀</p></section>
+<script src="mermaid.min.js"></script>
+<script>mermaid.initialize({ startOnLoad:true, theme:'base',
+  themeVariables: { fontFamily:'Vazirmatn, Tahoma', fontSize:'13px',
+    primaryColor:'#ecfdf5', primaryBorderColor:'#047857', primaryTextColor:'#0f1f17',
+    lineColor:'#64748b', secondaryColor:'#fffbeb', tertiaryColor:'#f6faf8' },
+  flowchart: { htmlLabels:true, curve:'basis' } });</script>
+</body></html>
